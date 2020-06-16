@@ -29,10 +29,10 @@ class Push(Stmt):
 
 class SingleExpr(Stmt):
     def __init__(self, expr: Expr):
-        self.expr = expr
+        self.elem = expr
     
     def __repr__(self):
-        return "SExpr(" + repr(self.expr) + ")"
+        return "SExpr(" + repr(self.elem) + ")"
 
 class Definition(Stmt):
     def __init__(self, name: str, exprs: List[Stmt]):

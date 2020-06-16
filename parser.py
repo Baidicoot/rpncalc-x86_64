@@ -41,7 +41,7 @@ def p_stmt_defn(p):
 
 def p_expr_lambda_defn(p):
     'statement : POPEN IDENT DEFN identifiers ARR statements PCLOSE'
-    p[0] = Definition(p[2], [SingleExpr(Lambda(p[4], p[6]))])
+    p[0] = Definition(p[2], [Push(Lambda(p[4], p[6]))])
 
 def p_stmt_expr(p):
     'statement : expression'

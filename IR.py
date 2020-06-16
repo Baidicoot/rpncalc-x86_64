@@ -3,21 +3,39 @@ from enum import Enum
 """
 IR for RPNCalcV4:
 
-special operations:
-bind - binds the top item on the stack to a local variable
-bind_frame - binds the current frame to a local variable in the parent frame
-call_local(x) - calls the xth local variable (debrujin indexes)
-push_local(x) - pushes the xth local variable
-merge - performs a stack merge
-frame - opens a new stack frame
-call_builtin(index) - call a builtin function
-
-{} denote blocks
+operations:
+push_local(n) - push nth local
+define(f) - call f and bind
+apply - call top stack element and merge
+call(f) - call f and merge
+ret - normal return
+closure(f, n) - create a closure around the function f with n arguments
+bytes(d) - push 32-bit data to the stack
 
 for example:
 (swap; a b -> b a) 1 2 swap
 would become:
-frame {frame {call_local(0) call_local(1) merge} bind_frame} 1 2 bind bind call_local(2)
+
+main:
+    define(swap)
+    bytes(1)
+    bytes(2)
+    push_local(0)
+    apply
+swap:
+    closure(lambda0, 2)
+    ret
+lambda0:
+    push_local(1)
+    apply
+    push_local(0)
+    apply
+    ret
+
+REGISTER USAGE:
+rbp points to the return address of the function
+rbp+1 is the current scope pointer
+rsp points to the top of the stack
 """
 
 builtins = ["+", "-", "*", "/"]
@@ -37,58 +55,83 @@ class Bound(Addr):
 class Op:
     pass
 
-class Bind(Op):
+class Apply(Op):
     def __init__(self):
         pass
 
     def emit(self):
-        return ""
+        return """
+    MERGE"""
+    
+    def __repr__(self):
+        return "Apply"
 
-class BindFrame(Op):
-    def __init__(self):
-        pass
-
-    def emit(self):
-        return ""
-
-class CallLocal(Op):
+class Local(Op):
     def __init__(self, index: int):
         self.index = index
 
     def emit(self):
-        return ""
+        return """
+    PUSH_LOCAL """ + str(self.index)
+    
+    def __repr__(self):
+        return "Local(" + str(self.index) + ")"
 
-class PushLocal(Op):
+class Call(Op):
     def __init__(self, index: int):
-        self.index = index
-
-    def emit(self):
-        return ""
-
-class Merge(Op):
-    def __init__(self):
-        pass
-
-    def emit(self):
-        return ""
-
-class Frame(Op):
-    def __init__(self):
-        pass
-
-    def emit(self):
-        return ""
-
-class Goto(Op):
-    def __init__(self, index):
         self.index = index
     
     def emit(self):
+        return """
+    call _""" + str(self.index)
+    
+    def __repr__(self):
+        return "Call(" + str(self.index) + ")"
+
+class Ret(Op):
+    def __init__(self):
+        pass
+    
+    def emit(self):
+        return """
+    RETURN"""
+    
+    def __repr__(self):
+        return "Ret"
+
+class Define(Op):
+    def __init__(self, index: int):
+        self.index = index
+
+    def emit(self):
+        return """
+    call _""" + str(self.index) + """
+    DEFINE"""
+    
+    def __repr__(self):
+        return "Define(" + str(self.index) + ")"
+
+class Closure(Op):
+    def __init__(self, index, nargs):
+        self.index = index
+        self.nargs = nargs
+    
+    def emit(self):
         return ""
+    
+    def __repr__(self):
+        return "Closure(" + str(self.index) + "," + str(self.nargs) + ")"
     
 class Bytes(Op):
-    def __init__(self, data: bytes):
+    def __init__(self, data):
         self.data = data
     
     def emit(self):
-        return ""
+        return """
+    mov rax, """ + str(self.data) + """
+    push rax
+    mov rax, 0
+    push rax"""
+    
+    def __repr__(self):
+        return "Bytes"

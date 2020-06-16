@@ -1,0 +1,1 @@
+nasm -felf64 rpnc.asm && gcc test.c rpnc.o && rm rpnc.o
