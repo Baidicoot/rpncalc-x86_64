@@ -1,6 +1,6 @@
 %define LOCAL_SCOPE [rbp-16]
 %define LOCAL_RETURN [rbp-8]
-%define INT_TYPE 2
+%define INT_TYPE 0x0000000200000000
 
 extern memclear
 extern memalloc
@@ -110,9 +110,45 @@ extern give_arg
 %macro INT 1
     mov r8, %1
     push r8
-    sub rsp, 8
-    mov qword [rsp], 0
-    mov dword [rsp], INT_TYPE
+    mov r8, INT_TYPE
+    push r8
+%endmacro
+
+%macro APPLY 0
+    cmp dword [rsp+4], 0
+    jne %%end
+    add rsp, 8
+    pop r9
+    GET_NELEMS
+%%apply:
+    cmp qword [r9+24], 0
+    je %%exec
+    cmp r8, 0
+    je %%pushc
+    dec r8
+    mov rdi, r9
+    pop rdx
+    pop rsi
+
+    push r8
+    push rax
+    call give_arg
+    mov r9, rax
+    pop rax
+    pop r8
+
+    jmp %%apply
+%%exec:
+    mov rsi, [r9]
+    mov rdi, rax
+    call [r9+16]
+    MERGE
+    jmp %%end
+%%pushc:
+    push r9
+    mov r9, 0
+    push r9
+%%end:
 %endmacro
 
 %macro MERGE 0
@@ -150,7 +186,7 @@ extern give_arg
     pop r8
 
     jmp %%apply
-%%exec: ; TODO - fix
+%%exec:
     mov rsi, [r9]
     mov rdi, rax
     call [r9+16]

@@ -23,29 +23,41 @@ addfn:
     pop r9
     add r8, r9
     push r8
-    sub rsp, 8
-    mov dword [rsp+4], 0
-    mov dword [rsp], 1
+    mov r8, INT_TYPE
+    push r8
     RETURN
 
 fn1:
     FUNCTION
 
+    INT 0x1
+
     mov r11, addfn
-    CLOSURE r11, 3, 0
+    CLOSURE r11, 2, 0
 
     RETURN
 
-testfn:
+testf:
     FUNCTION
 
     INT 0xdeadbeef
-    INT 0xdeadbeef
+    INT 0xcafebabe
 
     mov rdi, LOCAL_RETURN
     mov rsi, LOCAL_SCOPE
 
     call fn1
     MERGE
+
+    RETURN
+
+testfn:
+    FUNCTION
+
+    INT 0x1
+
+    mov r11, addfn
+    CLOSURE r11, 2, 0
+    APPLY
 
     RETURN
