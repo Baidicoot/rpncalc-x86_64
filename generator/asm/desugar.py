@@ -1,5 +1,5 @@
-from AST import *
-from IR import *
+from parser.AST import *
+from generator.asm.IR import *
 from typing import List, Tuple, Dict, TypeVar, Generic
 
 T = TypeVar('T')

@@ -3,3 +3,5 @@
 parsetab.py
 __pycache__
 *.o
+build.asm
+files

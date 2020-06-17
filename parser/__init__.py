@@ -1,6 +1,6 @@
 from ply import yacc # pylint: disable=import-error
-from AST import *
-from tokenizer import tokens
+from parser.AST import *
+from parser.tokenizer import tokens
 
 """
 RPNCalc64 BNF v1

@@ -31,7 +31,5 @@ _1:
 _2:
     FUNCTION
     PUSH_LOCAL 1
-    RESOLVE
     PUSH_LOCAL 0
-    RESOLVE
     RETURN
