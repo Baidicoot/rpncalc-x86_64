@@ -32,9 +32,15 @@ extern give_arg
     mov rdi, %1
     mov rsi, qword LOCAL_SCOPE
     call get_local
-    ; push local to stack
-    push rdx ; push data0
-    push rax ; push data1
+    ; push data0, data1
+    push rdx
+    push rax
+%endmacro
+
+%macro GET_LOCAL 1
+    mov rdi, %1
+    mov rsi, qword LOCAL_SCOPE
+    call get_local
 %endmacro
 
 %macro DEBUG_RET 0
@@ -95,6 +101,11 @@ extern give_arg
     mov %1, rax
 %endmacro
 
+%macro INITCALL 0
+    mov rdi, LOCAL_RETURN
+    mov rsi, LOCAL_SCOPE
+%endmacro
+
 %macro CLOSURE 3
     call memalloc
     mov qword [rax], %3
@@ -115,7 +126,7 @@ extern give_arg
 %endmacro
 
 %macro APPLY 0
-    cmp dword [rsp+4], 0
+    cmp dword [rsp], 0
     jne %%end
     add rsp, 8
     pop r9
@@ -196,5 +207,23 @@ extern give_arg
     mov r9, 0
     push r9
     jmp %%merge
+%%end:
+%endmacro
+
+%macro RESOLVE 0
+    ; reduce the stack
+    cmp dword [rsp+4], 0
+    je %%closure
+    cmp dword [rsp+4], 1
+    je %%list
+    jmp %%end
+%%closure:
+    APPLY
+    jmp %%end
+%%list:
+    pop rax
+    pop rax
+    MERGE
+    jmp %%end
 %%end:
 %endmacro

@@ -30,34 +30,24 @@ addfn:
 fn1:
     FUNCTION
 
-    INT 0x1
-
     mov r11, addfn
     CLOSURE r11, 2, 0
-
-    RETURN
-
-testf:
-    FUNCTION
-
-    INT 0xdeadbeef
-    INT 0xcafebabe
-
-    mov rdi, LOCAL_RETURN
-    mov rsi, LOCAL_SCOPE
-
-    call fn1
-    MERGE
+    APPLY
 
     RETURN
 
 testfn:
     FUNCTION
 
-    INT 0x1
+    INITCALL
+    call fn1
+    DEFINE
+
+    INT 0xcafebabe
+    INT 0xcafebabe
 
     mov r11, addfn
     CLOSURE r11, 2, 0
-    APPLY
+    RESOLVE
 
     RETURN

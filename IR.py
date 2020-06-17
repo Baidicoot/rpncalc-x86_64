@@ -61,7 +61,7 @@ class Apply(Op):
 
     def emit(self):
         return """
-    MERGE"""
+    RESOLVE"""
     
     def __repr__(self):
         return "Apply"
@@ -117,7 +117,10 @@ class Closure(Op):
         self.nargs = nargs
     
     def emit(self):
-        return ""
+        return """
+    mov r11, _""" + str(self.index) + """
+    mov rsi, LOCAL_SCOPE
+    CLOSURE r11, """ + str(self.nargs) + ", rsi"
     
     def __repr__(self):
         return "Closure(" + str(self.index) + "," + str(self.nargs) + ")"
@@ -125,13 +128,12 @@ class Closure(Op):
 class Bytes(Op):
     def __init__(self, data):
         self.data = data
+        if self.data is str:
+            print("WARNING: STRING DATA NOT SUPPORTED!")
     
     def emit(self):
         return """
-    mov rax, """ + str(self.data) + """
-    push rax
-    mov rax, 0
-    push rax"""
+    INT """ + str(self.data)
     
     def __repr__(self):
         return "Bytes"

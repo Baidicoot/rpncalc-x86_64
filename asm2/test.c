@@ -41,12 +41,11 @@ void memclear();
 Closure* give_arg(Closure* fn, uint64_t data0, uint64_t data1);
 Closure* give_arg0(Closure* fn, uint64_t data0, uint64_t data1);
 
-Block* testfn(Block* ret, Block* scope);
-Block* addfn(Block* ret, Block* scope);
+Block* _0(Block* ret, Block* scope);
 
 void main() {
     memclear();
-    Block* b = testfn(NULL, NULL);
+    Block* b = _0(NULL, NULL);
     debug_print_block(b);
     printf("\n");
     debug_print_block(b->data0);
