@@ -12,7 +12,7 @@ def asm(input, output):
     for i, v in enumerate(a):
         if i == 0:
             out = """
-%include "macro.asm"
+%include "raw/macro.asm"
 %define BLOCKS 128
 
 global scopemem
@@ -33,13 +33,16 @@ _0:
             out += "\n_"+str(i)+":\n    FUNCTION"
             out += v
     
-    os.chdir("generator/asm/raw")
+    currdir = os.getcwd()
+    os.chdir("generator/asm")
 
-    outf = open("build.asm", "w+")
+    outf = open("build/build.asm", "w+")
     outf.write(out)
     outf.close()
 
-    subprocess.run(['nasm', '-felf64', 'build.asm'])
-    subprocess.run(['gcc', 'test.c', 'build.o', 'memory.o', '-o', 'build.out'])
+    subprocess.run(['nasm', '-felf64', 'build/build.asm', '-o', 'build/build.o'])
+    subprocess.run(['gcc', 'raw/test.c', 'build/build.o', 'raw/memory.o', '-o', 'build/build.out'])
 
-    os.rename('build.out', '../../../'+output)
+    os.rename('build/build.out', currdir+"/"+output)
+
+    os.chdir(currdir)
