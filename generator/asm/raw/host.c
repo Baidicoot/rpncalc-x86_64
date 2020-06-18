@@ -5,7 +5,8 @@ typedef struct _block {
     struct _block* cons;
     uint64_t refs;
     uint64_t data0;
-    uint64_t data1;
+    uint32_t data1;
+    uint32_t type;
 } Block;
 
 typedef struct {
@@ -32,21 +33,34 @@ void debug_print_block(Block* block) {
     }
 }
 
-void memdrop(void* block);
-Block* memalloc();
-Block* memext(Block* parent, uint64_t data0, uint64_t data1);
-Block* memunext(Block* b);
-uint128_t get_local(uint64_t n, Block* scope);
-void memclear();
-Closure* give_arg(Closure* fn, uint64_t data0, uint64_t data1);
-Closure* give_arg0(Closure* fn, uint64_t data0, uint64_t data1);
+void print_output(Block* block) {
+    switch (block->type)
+    {
+    case 0:
+        printf("(closure; needs %i) ", ((Closure*)block->data0)->args);
+        break;
+    
+    case 1:
+        printf("list ");
+        break;
+    
+    case 2:
+        printf("%i ", block->data0);
+        break;
+    
+    default:
+        break;
+    }
+    if (block->cons != NULL) {
+        print_output(block->cons);
+    }
+}
 
 Block* _0(Block* ret, Block* scope);
 
 void main() {
     memclear();
     Block* b = _0(NULL, NULL);
-    debug_print_block(b);
+    print_output(b);
     printf("\n");
-    debug_print_block(b->data0);
 }

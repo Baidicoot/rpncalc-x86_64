@@ -3,6 +3,7 @@ import subprocess
 import os
 from generator.asm.desugar import irify
 import generator.asm.IR
+from sys import path
 
 @generator.generator
 def asm(input, output):
@@ -34,14 +35,14 @@ _0:
             out += v
     
     currdir = os.getcwd()
-    os.chdir("generator/asm")
+    os.chdir(path[0]+"/generator/asm")
 
     outf = open("build/build.asm", "w+")
     outf.write(out)
     outf.close()
 
     subprocess.run(['nasm', '-felf64', 'build/build.asm', '-o', 'build/build.o'])
-    subprocess.run(['gcc', 'raw/test.c', 'build/build.o', 'raw/memory.o', '-o', 'build/build.out'])
+    subprocess.run(['gcc', 'raw/host.c', 'build/build.o', 'raw/memory.o', '-o', 'build/build.out'])
 
     os.rename('build/build.out', currdir+"/"+output)
 
