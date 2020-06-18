@@ -8,3 +8,6 @@ RPNCalc is - wait for it - a reverse-polish notation, stack-based, calculator. I
 
 ## Useage
 To compile, simply run `python3 <main.py location> <input file> <output file> <backend>`. Current backends are: `asm`.
+
+## WHY PYTHON???
+I would like to have used Haskell, but for my Computer Science A-Level in 2 years we apparently have to use Python, so I thought it would be good to get some practice.
