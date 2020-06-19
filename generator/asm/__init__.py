@@ -6,8 +6,8 @@ import generator.asm.IR
 from sys import path
 
 @generator.generator
-def asm(input, output):
-    ops = irify(input)
+def asm(input, output, flags):
+    extern, ops = irify(input)
     a = list(map(lambda x : "".join(list(map(lambda y : y.emit(), x))), ops))
     out = ""
     for i, v in enumerate(a):
@@ -19,6 +19,7 @@ def asm(input, output):
 global scopemem
 global scopelen
 global _0
+""" + "".join(list(map(lambda e : "\nextern " + e, extern))) + """
 
 section .data
 scopelen: dq BLOCKS
@@ -42,7 +43,11 @@ _0:
     outf.close()
 
     subprocess.run(['nasm', '-felf64', 'build/build.asm', '-o', 'build/build.o'])
-    subprocess.run(['gcc', 'raw/host.c', 'build/build.o', 'raw/memory.o', '-o', 'build/build.out'])
+
+    if ('-glibc' in flags):
+        subprocess.run(['gcc', 'raw/host.c', 'build/build.o', 'raw/memory.o', '-o', 'build/build.out'])
+    else:
+        subprocess.run(['ld', 'raw/io.o', 'build/build.o', 'raw/memory.o', '-o', 'build/build.out', '-Os', '-Ns'])
 
     os.rename('build/build.out', currdir+"/"+output)
 

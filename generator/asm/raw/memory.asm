@@ -108,7 +108,7 @@ memunext:
 .nz:
     inc qword [rax+8]
 .end:
-    call memdrop
+    ; call memdrop ; this will definately cause a memory leak
     add rsp, 8
     ret
 

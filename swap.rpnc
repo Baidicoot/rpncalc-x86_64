@@ -1,1 +1,1 @@
-(oneand; a -> 1 'a) (run; a -> a) 2 '(->oneand) run
+(swap; a -> (b -> a b)) 1 2 swap 3 4 swap

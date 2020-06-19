@@ -20,4 +20,4 @@ if __name__ == "__main__":
         for g in generator.generators.keys():
             print("   ", g)
     
-    gen(ast, output)
+    gen(ast, output, argv[3:])

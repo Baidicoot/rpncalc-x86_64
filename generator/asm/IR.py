@@ -38,7 +38,13 @@ rbp+1 is the current scope pointer
 rsp points to the top of the stack
 """
 
-builtins = ["+", "-", "*", "/"]
+builtins = {
+    "io.printscope": ("io_printscope", 0),
+    "io.sayhi": ("io_sayhi", 0),
+    "io.putchar": ("io_putchar", 1),
+    "io.putint": ("io_putint", 1),
+    "io.putbyte": ("io_putbyte", 1),
+}
 
 class Addr:
     pass
@@ -54,6 +60,17 @@ class Bound(Addr):
 # it is utterly stupid to use classes for this enum, but so is 'pythonic' python, so...
 class Op:
     pass
+
+class Builtin(Op):
+    def __init__(self, name, nargs):
+        self.name = name
+        self.nargs = nargs
+    
+    def emit(self):
+        return """
+    mov r11, """ + self.name + """
+    mov rsi, LOCAL_SCOPE
+    CLOSURE r11, """ + str(self.nargs) + ", rsi"
 
 class Apply(Op):
     def __init__(self):
