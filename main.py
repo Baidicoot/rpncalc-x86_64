@@ -28,6 +28,7 @@ if __name__ == "__main__":
 
     decls, ast = parser.parser.parse(open(input).read())
 
+    links = []
     external = {}
     for decl in decls:
         fns = mods[decl.name].include() if decl.__class__ == parser.Include else mods[decl.name].imprt()
@@ -35,6 +36,7 @@ if __name__ == "__main__":
         if len(inter) > 0:
             print("NAME COLLISION ERROR:", inter, "ARE MULTIPLY USED")
             exit(3)
+        links.extend(mods[decl.name].files)
         external.update(fns)
 
     try:
@@ -44,4 +46,4 @@ if __name__ == "__main__":
         for g in generator.generators.keys():
             print("   ", g)
     
-    gen(ast, output, argv[3:], external)
+    gen(ast, output, argv[3:], external, links)

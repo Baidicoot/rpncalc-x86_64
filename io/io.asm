@@ -1,4 +1,4 @@
-%include "raw/macro.asm"
+%include "../generator/asm/raw/macro.asm"
 
 section .data
 hex: db "0123456789abcdef"
@@ -21,9 +21,6 @@ scopelen: dq scopelen-scopemsg
 
 section .bss
 buf: resb 16
-
-extern _0
-global _start
 
 global io_printscope
 global io_sayhi
@@ -291,16 +288,3 @@ io_putint:
     mov rdi, rdx
     call putint
     RETURN
-
-_start:
-    mov rdi, 0
-    mov rsi, 0
-    call _0
-
-    mov rdi, rax
-    mov rsi, 0
-    call printblock
-
-    mov rax, 60
-    mov rdi, 0
-    syscall

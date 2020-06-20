@@ -6,7 +6,7 @@ import generator.asm.IR
 from sys import path
 
 @generator.generator
-def asm(input, output, flags, extern):
+def asm(input, output, flags, extern, links):
     ops = irify(input, extern)
     a = list(map(lambda x : "".join(list(map(lambda y : y.emit(), x))), ops))
     out = ""
@@ -36,6 +36,7 @@ _0:
             out += v
     
     currdir = os.getcwd()
+    links = list(map(lambda p : currdir + '/' + p, links))
     os.chdir(path[0]+"/generator/asm")
 
     outf = open("build/build.asm", "w+")
@@ -45,9 +46,9 @@ _0:
     subprocess.run(['nasm', '-felf64', 'build/build.asm', '-o', 'build/build.o'])
 
     if ('-glibc' in flags):
-        subprocess.run(['gcc', 'raw/host.c', 'build/build.o', 'raw/memory.o', '-o', 'build/build.out'])
+        subprocess.run(['gcc', 'raw/host.c', 'build/build.o', 'raw/memory.o', '-o', 'build/build.out'] + links)
     else:
-        subprocess.run(['ld', 'raw/io.o', 'build/build.o', 'raw/memory.o', '-o', 'build/build.out', '-Os', '-Ns'])
+        subprocess.run(['ld', 'raw/host.o', 'build/build.o', 'raw/memory.o', '-o', 'build/build.out', '-Os', '-Ns'] + links)
 
     os.rename('build/build.out', currdir+"/"+output)
 

@@ -1,6 +1,22 @@
-files = [""]
+files = ["io/io.o"]
 
 [io]
 [io.putchar]
 name = "io_putchar"
+args = 1
+
+[io.sayhi]
+name = "io_sayhi"
+args = 0
+
+[io.printscope]
+name = "io_printscope"
+args = 0
+
+[io.putint]
+name = "io_putint"
+args = 1
+
+[io.putbyte]
+name = "io_putbyte"
 args = 1
