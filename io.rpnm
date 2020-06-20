@@ -1,0 +1,6 @@
+files = [""]
+
+[io]
+[io.putchar]
+name = "io_putchar"
+args = 1

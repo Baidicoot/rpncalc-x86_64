@@ -12,6 +12,17 @@ data Expr
     | Lambda [str] [Stmt]
 """
 
+class Decl:
+    pass
+
+class Import:
+    def __init__(self, file: str):
+        self.name = file
+
+class Include:
+    def __init__(self, file: str):
+        self.name = file
+
 # abstract class declarations:
 class Stmt:
     pass

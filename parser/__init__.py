@@ -3,7 +3,15 @@ from parser.AST import *
 from parser.tokenizer import tokens
 
 """
-RPNCalc64 BNF v1
+RPNCalc64 BNF v2
+
+program     : decls statements
+
+decls       : decl decls
+            |
+
+decl        : DECL IMPORT IDENT PCLOSE
+            | DECL INCLUDE IDENT PCLOSE
 
 statements  : statement statements
             |
@@ -22,6 +30,26 @@ expression  : INT
 identifiers : IDENT identifiers
             |
 """
+
+def p_program(p):
+    'program : decls statements'
+    p[0] = (p[1], p[2])
+
+def p_decls_cons(p):
+    'decls : decl decls'
+    p[0] = [p[1]] + p[2]
+
+def p_decls_nil(p):
+    'decls :'
+    p[0] = []
+
+def p_import(p):
+    'decl : DECL IMPORT IDENT PCLOSE'
+    p[0] = Import(p[3])
+
+def p_include(p):
+    'decl : DECL INCLUDE IDENT PCLOSE'
+    p[0] = Include(p[3])
 
 def p_stmts_cons(p):
     'statements : statement statements'

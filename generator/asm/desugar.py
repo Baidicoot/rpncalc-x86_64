@@ -21,7 +21,7 @@ def Just(val: T) -> Maybe[T]:
     return Maybe(val)
 
 class Walker:
-    def __init__(self, bound: List[Tuple[Maybe[str], int, List[str]]], completed: List[Maybe[List[Op]]], current: List[List[Op]], indexes: List[int], extern: List[str] = []):
+    def __init__(self, bound: List[Tuple[Maybe[str], int, List[str]]], completed: List[Maybe[List[Op]]], current: List[List[Op]], indexes: List[int], extern: Dict[str, Tuple[str, int]]):
         self.bound = bound
         self.completed = completed
         self.current = current
@@ -32,10 +32,6 @@ class Walker:
         bname, index, idents = self.bound[0]
         bound = [(bname, index, [name] + idents)] + self.bound[1:]
         return Walker(bound, self.completed, self.current, self.indexes, self.extern)
-    
-    def newextern(self, name: str) -> 'Walker':
-        newextern = [name] + self.extern
-        return Walker(self.bound, self.completed, self.current, self.indexes, newextern)
 
     def newindex(self) -> int:
         return len(self.completed)
@@ -76,14 +72,16 @@ class Walker:
                     count += 1
         return Nothing()
     
-    def finish(self) -> Tuple[List[str], List[List[Op]]]:
+    def get_extern(self, name: str) -> Maybe[Tuple[str, int]]:
+        return Maybe(self.extern.get(name))
+    
+    def finish(self) -> List[List[Op]]:
         ctx = self.end_block()
         out = []
         for c in ctx.completed:
             out.append(c.unwrap())
-        return (self.extern, out)
+        return out
 
-# TODO: fix ident 'Maybe' indexes, reorganise calling convention, bad ordering
 def desugar(ctx: Walker, s: Stmt) -> Walker:
     c = s.__class__
     if c == Push:
@@ -92,11 +90,12 @@ def desugar(ctx: Walker, s: Stmt) -> Walker:
         if c == Ident:
             a = ctx.index(e.name)
             if a.isNothing:
-                if e.name in builtins.keys():
-                    b = builtins[e.name]
-                    return ctx.write([Builtin(b[0], b[1])])
-                else:
+                a = ctx.get_extern(e.name)
+                if a.isNothing:
                     raise BaseException('variable ' + e.name + ' not in scope')
+                else:
+                    ext = a.unwrap()
+                    return ctx.write([Builtin(ext[0], ext[1])])
             addr = a.unwrap()
             if addr.__class__ == Rec:
                 return ctx.write([Closure(addr.index, 0)])
@@ -117,12 +116,12 @@ def desugar(ctx: Walker, s: Stmt) -> Walker:
         if c == Ident:
             a = ctx.index(e.name)
             if a.isNothing:
-                if e.name in builtins.keys():
-                    b = builtins[e.name]
-                    ctx = ctx.newextern(b[0])
-                    return ctx.write([Builtin(b[0], b[1]), Apply()])
-                else:
+                a = ctx.get_extern(e.name)
+                if a.isNothing:
                     raise BaseException('variable ' + e.name + ' not in scope')
+                else:
+                    ext = a.unwrap()
+                    return ctx.write([Builtin(ext[0], ext[1]), Apply()])
             addr = a.unwrap()
             if addr.__class__ == Rec:
                 return ctx.write([Call(addr.index)])
@@ -148,8 +147,8 @@ def desugar(ctx: Walker, s: Stmt) -> Walker:
 def literal(e):
     return Bytes(e.val)
 
-def irify(stmts: List[Stmt]):
-    ctx = Walker([(Nothing(), 0, [])], [Nothing()], [[]], [0])
+def irify(stmts: List[Stmt], extern: Dict[str, Tuple[str, int]]):
+    ctx = Walker([(Nothing(), 0, [])], [Nothing()], [[]], [0], extern)
     for s in stmts:
         ctx = desugar(ctx, s)
     return ctx.finish()

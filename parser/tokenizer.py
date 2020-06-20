@@ -8,7 +8,10 @@ tokens = (
     'ARR',
     'PUSH',
     'INT',
-    'IDENT'
+    'IDENT',
+    'IMPORT',
+    'INCLUDE',
+    'DECL'
 )
 
 def t_STR(t):
@@ -21,10 +24,13 @@ syntax_toks = {
     '\'': 'PUSH',
     ';': 'DEFN',
     '(': 'POPEN',
-    ')': 'PCLOSE'
+    ')': 'PCLOSE',
+    '(#': 'DECL',
+    'import': 'IMPORT',
+    'include': 'INCLUDE'
 }
 def t_SYNTAX(t):
-    r"->|'|;|\(|\)"
+    r"\(\#|->|'|;|\(|\)"
     t.type = syntax_toks[t.value]
     return t
 
@@ -34,7 +40,9 @@ def t_INT(t):
     return t
 
 def t_IDENT(t):
-    r"(?:[^;'()\-\s]|-(?!>))+"
+    r"(?:[^;'()\-\#\s]|-(?!>))+"
+    if t.value in syntax_toks:
+        t.type = syntax_toks[t.value]
     return t
 
 def t_NL(t):

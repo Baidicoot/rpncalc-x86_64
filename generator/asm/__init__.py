@@ -6,8 +6,8 @@ import generator.asm.IR
 from sys import path
 
 @generator.generator
-def asm(input, output, flags):
-    extern, ops = irify(input)
+def asm(input, output, flags, extern):
+    ops = irify(input, extern)
     a = list(map(lambda x : "".join(list(map(lambda y : y.emit(), x))), ops))
     out = ""
     for i, v in enumerate(a):
@@ -19,7 +19,7 @@ def asm(input, output, flags):
 global scopemem
 global scopelen
 global _0
-""" + "".join(list(map(lambda e : "\nextern " + e, extern))) + """
+""" + "".join(list(map(lambda e : "\nextern " + e[0], extern.values()))) + """
 
 section .data
 scopelen: dq BLOCKS
