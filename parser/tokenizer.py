@@ -11,7 +11,8 @@ tokens = (
     'IDENT',
     'IMPORT',
     'INCLUDE',
-    'DECL'
+    'DOPEN',
+    'DCLOSE'
 )
 
 def t_STR(t):
@@ -23,14 +24,15 @@ syntax_toks = {
     '->': 'ARR',
     '\'': 'PUSH',
     ';': 'DEFN',
+    '(#': 'DOPEN',
+    '#)': 'DCLOSE',
     '(': 'POPEN',
     ')': 'PCLOSE',
-    '(#': 'DECL',
     'import': 'IMPORT',
     'include': 'INCLUDE'
 }
 def t_SYNTAX(t):
-    r"\(\#|->|'|;|\(|\)"
+    r"\(\#|\#\)|->|'|;|\(|\)"
     t.type = syntax_toks[t.value]
     return t
 

@@ -44,11 +44,11 @@ def p_decls_nil(p):
     p[0] = []
 
 def p_import(p):
-    'decl : DECL IMPORT IDENT PCLOSE'
+    'decl : DOPEN IMPORT IDENT DCLOSE'
     p[0] = Import(p[3])
 
 def p_include(p):
-    'decl : DECL INCLUDE IDENT PCLOSE'
+    'decl : DOPEN INCLUDE IDENT DCLOSE'
     p[0] = Include(p[3])
 
 def p_stmts_cons(p):
