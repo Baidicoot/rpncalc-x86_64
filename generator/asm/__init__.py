@@ -7,10 +7,10 @@ from sys import path
 from misc import Relative, Absolute
 
 @generator.libgenerator('asm')
-def libasm(input, output, flags, extern):
+def libasm(input, output, flags, ext):
     offset = 0
     asts = input.getast()
-    extern = {**extern, **input.include()}
+    extern = {**ext, **input.include()}
     out = []
     for sym, ast in asts.items():
         ops = irify(ast, extern)
@@ -25,11 +25,11 @@ def libasm(input, output, flags, extern):
         offset += len(blocks)
     header = """
 %include "raw/macro.asm"
-
+""" + "\n".join(["extern "+n for n, _ in ext.values()]) + """
 extern scopemem
 extern scopelen
 """ + "\n".join(["global "+n for n in asts.keys()])
-    gen_asm = header + "\n" + "\n".join(out)
+    gen_asm = header + "\n\n" + "\n".join(out)
 
     currdir = os.getcwd()
     os.chdir(path[0]+"/generator/asm")
@@ -73,7 +73,7 @@ _0:
             out += v
     
     currdir = os.getcwd()
-    links = list(map(lambda p : currdir + '/' + p.path if p.__class__ == Relative else p.path, links))
+    links = list(map(lambda p : currdir + '/generator/asm/build/' + p.path if p.__class__ == Relative else p.path, links))
     os.chdir(path[0]+"/generator/asm")
 
     outf = open("build/build.asm", "w+")

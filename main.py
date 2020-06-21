@@ -55,8 +55,6 @@ libgen = None
 gen = None
 
 def compilelib(name):
-    if name in compiled:
-        return
     if name not in libs.keys():
         print("MODULE/LIBRARY", name, "DOES NOT EXIST")
         exit(5)

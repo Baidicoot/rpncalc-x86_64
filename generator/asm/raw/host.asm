@@ -2,22 +2,10 @@
 
 section .data
 hex: db "0123456789abcdef"
-
-typenames: dq clstype, listype, inttype
-typelens: dq 11, 8, 7
-typeprints: dq printcls, printlist, printint
-
-inttype: db "INT at "
-clstype: db "CLOSURE at "
-listype: db "LIST at "
-
-refstr: db " objects reference this"
-reflen: dq reflen-refstr
-
-himsg: db "hi!", 0xA
-
-scopemsg: db "scope: "
-scopelen: dq scopelen-scopemsg
+closure: db "(closure; needs "
+closurelen: dq closurelen-closure
+list: db "list"
+listlen: dq listlen-list
 
 section .bss
 buf: resb 16
@@ -100,19 +88,6 @@ putstrln:
 
     ret
 
-indent:
-    cmp rdi, 0
-    je .exit
-    push rdi
-
-    mov rdi, 0x20
-    call putchar
-    pop rdi
-    dec rdi
-    jmp indent
-.exit:
-    ret
-
 putint:
     ; rdi - int
     ; uses rsi
@@ -124,121 +99,73 @@ putint:
     call putstr
     ret
 
-newline:
-    mov rdi, 0xA
-    call putchar
-    ret
-
 printblock:
     push rdi
-    push rsi
-    ; rdi - blockptr
-    ; rsi - indent
     cmp rdi, 0
-    je .exit
+    je .ret
+    mov r9d, [rdi+28]
+    cmp r9d, 0
+    je .closure
+    cmp r9d, 1
+    je .list
+    cmp r9d, 2
+    je .int
+.other:
+    mov rdi, 0x28
+    call putchar
 
     mov rdi, [rsp]
-    call indent
-
-    mov rdi, [rsp+8]
-    mov r8, 0
-    mov r8d, [rdi+28]
-    shl r8, 3
-    mov rdi, typenames
-    mov rdi, [rdi+r8]
-    mov rsi, typelens
-    mov rsi, [rsi+r8]
-    call putstr
-
-    mov rdi, [rsp+8]
+    mov rdi, [rdi+16]
     call putint
 
-    call newline
-
-    add qword [rsp], 4
-
-    mov rdi, [rsp]
-    call indent
-
-    mov rdi, [rsp+8]
-    mov rdi, [rdi+8]
-    call putint
-
-    mov rdi, refstr
-    mov rsi, reflen
-    mov rsi, [rsi]
-    call putstrln
-
-    mov rdi, [rsp+8]
-    mov r8, 0
-    mov r8d, [rdi+28]
-    shl r8, 3
-    mov r9, typeprints
-    mov rdi, [rsp+8]
-    mov rsi, [rsp]
-    call [r9+r8]
-
-    mov rdi, [rsp+8]
-    mov rdi, [rdi]
-    mov rsi, [rsp]
-    call printblock
-.exit:
-    pop rsi
-    pop rdi
-    ret
-
-printint:
-    push rdi
-    mov rdi, rsi
-    call indent
-    pop rdi
-
-    mov rdi, [rdi+16]
-    mov rsi, buf
-    call itoh
-
-    mov rdi, buf
-    mov rsi, 16
-    call putstrln
-
-    ret
-
-printcls:
-    mov rdi, [rdi+16]
-    push rdi
-    push rsi
+    mov rdi, 0x20
+    call putchar
 
     mov rdi, [rsp]
-    call indent
-
-    mov rdi, [rsp+8]
     mov rdi, [rdi+24]
     call putint
 
-    call newline
+    mov rdi, 0x29
+    call putchar
+
+    jmp .rep
+.closure:
+    mov rdi, closure
+    mov rsi, closurelen
+    mov rsi, [rsi]
+    call putstr
 
     mov rdi, [rsp]
-    call indent
+    mov rdi, [rdi+16]
+    mov rdi, [rdi+24]
+    call putint
 
-    mov rdi, [rsp+8]
+    mov rdi, 0x29
+    call putchar
+
+    jmp .rep
+.list:
+    mov rdi, list
+    mov rsi, listlen
+    mov rsi, [rsi]
+    call putstr
+
+    jmp .rep
+.int:
+    mov rdi, [rsp]
     mov rdi, [rdi+16]
     call putint
 
-    call newline
+    jmp .rep
+.rep:
+    mov rdi, 0x20
+    call putchar
 
-    mov rdi, [rsp+8]
-    mov rdi, [rdi]
-    ; mov rdi, [rdi]
-    mov rsi, [rsp]
-    call printblock
-
-    pop rsi
     pop rdi
-    ret
-
-printlist:
-    mov rdi, [rdi+16]
-    call printblock
+    mov rdi, [rdi]
+    jmp printblock
+.ret:
+    pop rdi
     ret
 
 _start:
@@ -249,6 +176,9 @@ _start:
     mov rdi, rax
     mov rsi, 0
     call printblock
+
+    mov rdi, 0x0A
+    call putchar
 
     mov rax, 60
     mov rdi, 0
