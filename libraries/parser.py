@@ -1,17 +1,21 @@
 from ply import yacc # pylint: disable=import-error
 from parser.AST import *
+from libraries.library import *
 from parser.tokenizer import tokens
 
 """
-RPNCalc64 BNF v2
+RPNCalc Libary Syntax:
 
-program     : decls statements
+library     : decls
 
 decls       : decl decls
             |
 
-decl        : DECL IMPORT IDENT PCLOSE
-            | DECL INCLUDE IDENT PCLOSE
+decl        : DOPEN IMPORT IDENT DCLOSE
+            | DOPEN INCLUDE IDENT DCLOSE
+            | DOPEN LIBRARY IDENT DCLOSE
+            | POPEN EXPORT IDENT DEFN statements PCLOSE
+            | POPEN EXPORT IDENT DEFN identifiers ARR statements PCLOSE
 
 statements  : statement statements
             |
@@ -31,10 +35,6 @@ identifiers : IDENT identifiers
             |
 """
 
-def p_program(p):
-    'program : decls statements'
-    p[0] = (p[1], p[2])
-
 def p_decls_cons(p):
     'decls : decl decls'
     p[0] = [p[1]] + p[2]
@@ -42,6 +42,18 @@ def p_decls_cons(p):
 def p_decls_nil(p):
     'decls :'
     p[0] = []
+
+def p_export(p):
+    'decl : POPEN EXPORT IDENT DEFN statements PCLOSE'
+    p[0] = Export(p[3], p[5])
+
+def p_lambda_export(p):
+    'decl : POPEN EXPORT IDENT DEFN identifiers ARR statements PCLOSE'
+    p[0] = Export(p[3], [Push(Lambda(p[5], p[7]))])
+
+def p_libname(p):
+    'decl : DOPEN LIBRARY IDENT DCLOSE'
+    p[0] = LibName(p[3])
 
 def p_import(p):
     'decl : DOPEN IMPORT IDENT DCLOSE'
@@ -101,17 +113,5 @@ def p_idents_nil(p):
 
 def p_error(p):
     print("Syntax error in input:", p)
-
-def getexternal(decls):
-    imprts = []
-    includes = []
-    for d in decls:
-        if d.__class__ == Import:
-            imprts.append(d.name)
-        elif d.__class__ == Include:
-            includes.append(d.name)
-        else:
-            raise BaseException('INVALID DECLARATION '+str(d))
-    return imprts, includes
 
 parser = yacc.yacc()

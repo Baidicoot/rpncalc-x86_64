@@ -4,10 +4,10 @@ from typing import List
 data Stmt -- 'MaybePush' would be clearer?
     = Push Expr
     | SingleExpr Expr
+    | Definition str [Stmt]
 
 data Expr
-    = Definition str [Stmt]
-    | Int int
+    = Int int
     | Str str
     | Lambda [str] [Stmt]
 """
@@ -15,15 +15,6 @@ data Expr
 class Decl:
     pass
 
-class Import:
-    def __init__(self, file: str):
-        self.name = file
-
-class Include:
-    def __init__(self, file: str):
-        self.name = file
-
-# abstract class declarations:
 class Stmt:
     pass
 
@@ -31,6 +22,35 @@ class Expr:
     pass
 
 # case class definitions:
+class Import(Decl):
+    def __init__(self, file: str):
+        self.name = file
+    
+    def __repr__(self):
+        return "Import(" + self.name + ")"
+
+class Include(Decl):
+    def __init__(self, file: str):
+        self.name = file
+    
+    def __repr__(self):
+        return "Include(" + self.name + ")"
+    
+class Export(Decl):
+    def __init__(self, name: str, exprs: List[Stmt]):
+        self.name = name
+        self.exprs = exprs
+    
+    def __repr__(self):
+        return "Export(" + self.name + "," + str(self.exprs) + ")"
+
+class LibName(Decl):
+    def __init__(self, name: str):
+        self.name = name
+    
+    def __repr__(self):
+        return "Lib("+self.name+")"
+
 class Push(Stmt):
     def __init__(self, expr: Expr):
         self.elem = expr

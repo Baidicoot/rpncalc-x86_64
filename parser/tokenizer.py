@@ -12,7 +12,9 @@ tokens = (
     'IMPORT',
     'INCLUDE',
     'DOPEN',
-    'DCLOSE'
+    'DCLOSE',
+    'EXPORT',
+    'LIBRARY'
 )
 
 def t_STR(t):
@@ -29,7 +31,9 @@ syntax_toks = {
     '(': 'POPEN',
     ')': 'PCLOSE',
     'import': 'IMPORT',
-    'include': 'INCLUDE'
+    'include': 'INCLUDE',
+    'export': 'EXPORT',
+    'library': 'LIBRARY'
 }
 def t_SYNTAX(t):
     r"\(\#|\#\)|->|'|;|\(|\)"

@@ -66,7 +66,7 @@ class Builtin(Op):
         self.name = name
         self.nargs = nargs
     
-    def emit(self):
+    def emit(self, offset=0):
         return """
     mov r11, """ + self.name + """
     mov rsi, LOCAL_SCOPE
@@ -76,7 +76,7 @@ class Apply(Op):
     def __init__(self):
         pass
 
-    def emit(self):
+    def emit(self, offset=0):
         return """
     RESOLVE"""
     
@@ -87,7 +87,7 @@ class Local(Op):
     def __init__(self, index: int):
         self.index = index
 
-    def emit(self):
+    def emit(self, offset=0):
         return """
     PUSH_LOCAL """ + str(self.index)
     
@@ -98,9 +98,9 @@ class Call(Op):
     def __init__(self, index: int):
         self.index = index
     
-    def emit(self):
+    def emit(self, offset=0):
         return """
-    call _""" + str(self.index)
+    call _""" + str(self.index+offset)
     
     def __repr__(self):
         return "Call(" + str(self.index) + ")"
@@ -109,7 +109,7 @@ class Ret(Op):
     def __init__(self):
         pass
     
-    def emit(self):
+    def emit(self, offset=0):
         return """
     RETURN"""
     
@@ -120,9 +120,9 @@ class Define(Op):
     def __init__(self, index: int):
         self.index = index
 
-    def emit(self):
+    def emit(self, offset=0):
         return """
-    call _""" + str(self.index) + """
+    call _""" + str(self.index+offset) + """
     DEFINE"""
     
     def __repr__(self):
@@ -133,9 +133,9 @@ class Closure(Op):
         self.index = index
         self.nargs = nargs
     
-    def emit(self):
+    def emit(self, offset=0):
         return """
-    mov r11, _""" + str(self.index) + """
+    mov r11, _""" + str(self.index+offset) + """
     mov rsi, LOCAL_SCOPE
     CLOSURE r11, """ + str(self.nargs) + ", rsi"
     
@@ -148,7 +148,7 @@ class Bytes(Op):
         if self.data is str:
             print("WARNING: STRING DATA NOT SUPPORTED!")
     
-    def emit(self):
+    def emit(self, offset=0):
         return """
     INT """ + str(self.data)
     

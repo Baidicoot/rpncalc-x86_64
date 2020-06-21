@@ -1,6 +1,6 @@
-files = ["io/io.o"]
-
 [io]
+files = ["std/io.o"]
+
 [io.putchar]
 name = "io_putchar"
 args = 1
@@ -20,3 +20,16 @@ args = 1
 [io.putbyte]
 name = "io_putbyte"
 args = 1
+
+[list]
+files = ["std/list.o"]
+
+[list.cons]
+name = "list_cons"
+args = 2
+alts = ["]", ":"]
+
+[list.nil]
+name = "list_nil"
+args = 2
+alts = ["[]", "["]

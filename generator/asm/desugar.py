@@ -147,8 +147,11 @@ def desugar(ctx: Walker, s: Stmt) -> Walker:
 def literal(e):
     return Bytes(e.val)
 
-def irify(stmts: List[Stmt], extern: Dict[str, Tuple[str, int]]):
+def irify(stmts: List[Stmt], extern: Dict[str, Tuple[str, int]], length=False):
     ctx = Walker([(Nothing(), 0, [])], [Nothing()], [[]], [0], extern)
     for s in stmts:
         ctx = desugar(ctx, s)
-    return ctx.finish()
+    if length:
+        return (ctx.finish(), ctx.newindex())
+    else:
+        return ctx.finish()

@@ -4,8 +4,45 @@ import os
 from generator.asm.desugar import irify
 import generator.asm.IR
 from sys import path
+from misc import Relative, Absolute
 
-@generator.generator
+@generator.libgenerator('asm')
+def libasm(input, output, flags, extern):
+    offset = 0
+    asts = input.getast()
+    extern = {**extern, **input.include()}
+    out = []
+    for sym, ast in asts.items():
+        ops = irify(ast, extern)
+        blocks = list(map(lambda x : "".join(list(map(lambda y : y.emit(offset), x))), ops))
+        thisout = sym + """:
+    FUNCTION""" + blocks[0] + """
+    RETURN"""
+        for i in range(1, len(blocks)):
+            thisout += "\n_"+str(offset+i)+":\n    FUNCTION"
+            thisout += blocks[i]
+        out.append(thisout)
+        offset += len(blocks)
+    header = """
+%include "raw/macro.asm"
+
+extern scopemem
+extern scopelen
+""" + "\n".join(["global "+n for n in asts.keys()])
+    gen_asm = header + "\n" + "\n".join(out)
+
+    currdir = os.getcwd()
+    os.chdir(path[0]+"/generator/asm")
+
+    outf = open("build/"+input.name+".asm", "w+")
+    outf.write(gen_asm)
+    outf.close()
+
+    subprocess.run(['nasm', '-felf64', 'build/'+input.name+'.asm', '-o', 'build/'+output])
+
+    os.chdir(currdir)
+
+@generator.generator('asm')
 def asm(input, output, flags, extern, links):
     ops = irify(input, extern)
     a = list(map(lambda x : "".join(list(map(lambda y : y.emit(), x))), ops))
@@ -36,7 +73,7 @@ _0:
             out += v
     
     currdir = os.getcwd()
-    links = list(map(lambda p : currdir + '/' + p, links))
+    links = list(map(lambda p : currdir + '/' + p.path if p.__class__ == Relative else p.path, links))
     os.chdir(path[0]+"/generator/asm")
 
     outf = open("build/build.asm", "w+")
