@@ -1,8 +1,9 @@
-%include "../generator/asm/raw/macro.asm"
+%include "../../generator/asm/raw/macro.asm"
 
 global list_cons
 global list_nil
 global list_is_nil
+global list_uncons
 
 section .text
 list_cons:
@@ -67,4 +68,19 @@ list_is_nil:
     mov rax, 0x0000000400000000
     push rax
 .ret:
+    RETURN
+
+list_uncons:
+    FUNCTION
+    GET_LOCAL 0
+    mov r8, [rdx+24]
+    mov r9, [r8+16]
+    mov r10, [r8+24]
+    push r10
+    push r9
+    mov r8, [rdx+16]
+    mov r9, [r8+16]
+    mov r10, [r8+24]
+    push r10
+    push r9
     RETURN

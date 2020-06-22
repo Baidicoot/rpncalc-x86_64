@@ -1,0 +1,9 @@
+(# library list #)
+(# include list #)
+(# include bool #)
+
+(export map; list fn ->
+    []
+    '(-> list /
+        (xs x -> xs 'fn map x fn :))
+    list []? ?:)

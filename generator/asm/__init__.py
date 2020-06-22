@@ -51,7 +51,7 @@ def asm(input, output, flags, extern, links):
         if i == 0:
             out = """
 %include "raw/macro.asm"
-%define BLOCKS 128
+%define BLOCKS 4096
 
 global scopemem
 global scopelen

@@ -1,4 +1,4 @@
-%include "../generator/asm/raw/macro.asm"
+%include "../../generator/asm/raw/macro.asm"
 
 section .data
 hex: db "0123456789abcdef"

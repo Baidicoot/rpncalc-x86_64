@@ -1,4 +1,4 @@
-%include "../generator/asm/raw/macro.asm"
+%include "../../generator/asm/raw/macro.asm"
 
 global bool_eq
 global bool_true

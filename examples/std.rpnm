@@ -39,6 +39,11 @@ name = "list_is_nil"
 args = 1
 alts = ["[]?", "nil?"]
 
+[list.uncons]
+name = "list_uncons"
+args = 1
+alts = ["][", "/"]
+
 [bool]
 files = ["std/bool.o"]
 
