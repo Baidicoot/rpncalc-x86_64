@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 import os.path
 import parser
@@ -7,7 +8,7 @@ import libraries.library
 import generator
 import generator.asm
 from sys import argv
-from misc import *
+from misc import Absolute, Relative
 
 from typing import Callable, List, Dict, Tuple, NoReturn
 
@@ -121,7 +122,7 @@ def genexterns(imprts, includes, ignorelibs=[], ignoremods=[]):
 if __name__ == "__main__":
     initextern()
 
-    if len(argv) != 4:
+    if len(argv) < 4:
         print("INVALID ARGUMENTS SUPPLIED")
         exit(0)
     input = argv[1]

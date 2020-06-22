@@ -1,10 +1,10 @@
 
 %include "raw/macro.asm"
-extern io_putbyte
-extern io_putchar
 extern io_sayhi
-extern io_putint
 extern io_printscope
+extern io_putint
+extern io_putchar
+extern io_putbyte
 extern scopemem
 extern scopelen
 global io_helloworld
