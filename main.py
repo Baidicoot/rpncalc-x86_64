@@ -23,7 +23,7 @@ def loadmods(file):
         print("COULD NOT PARSE MODULE FILE", file)
         exit(1)
     for m in mod:
-        if m.name in mods.keys() or m.name in libs.keys():
+        if m.name in mods.keys():
             print("MODULE", m.name, "IS REDEFINED IN FILE", file)
             exit(2)
         mods[m.name] = m
@@ -33,7 +33,7 @@ def loadlib(file):
     if lib is None:
         print("COULD NOT PARSE LIB FILE", file)
         exit(3)
-    if lib.name in mods.keys() or lib.name in libs.keys():
+    if lib.name in libs.keys():
         print("LIBRARY", lib.name, "IS REDEFINED IN FILE", file)
         exit(4)
     libs[lib.name] = lib
@@ -46,7 +46,8 @@ def initextern():
         elif file.endswith('.rpnl'):
             loadlib(file)
 
-compiled = []
+compiled_libs = []
+compiled_mods = []
 tolink = []
 
 flags = []
@@ -54,56 +55,62 @@ flags = []
 libgen = None
 gen = None
 
-def compilelib(name):
+def compilelib(name, ignorelibs, ignoremods):
     if name not in libs.keys():
         print("MODULE/LIBRARY", name, "DOES NOT EXIST")
         exit(5)
-    externs = genexterns(libs[name].imprts, libs[name].includes)
+    externs = genexterns(libs[name].imprts, libs[name].includes, [name] + ignorelibs, ignoremods)
     libgen(libs[name], name+'.o', flags, externs)
 
-def imprt(name):
-    if name in mods.keys():
-        if name not in compiled:
-            compiled.append(name)
+def imprt(name, ignorelibs, ignoremods):
+    extern = {}
+    if name in mods.keys() and name not in ignoremods:
+        if name not in compiled_mods:
+            compiled_mods.append(name)
             tolink.extend(map(lambda p : Absolute(mods[name].path+'/'+p), mods[name].files))
-        return mods[name].imprt()
-    elif name in libs.keys():
-        if name not in compiled:
-            compiled.append(name)
-            compilelib(name)
+        extern.update(mods[name].imprt())
+    if name in libs.keys() and name not in ignorelibs:
+        if name not in compiled_libs:
+            compiled_libs.append(name)
+            compilelib(name, ignorelibs, ignoremods)
             tolink.append(Relative(name+'.o'))
-        return libs[name].imprt()
-    else:
+        extern.update(libs[name].imprt())
+    if extern == {}:
         print("MODULE/LIBRARY", name, "DOES NOT EXIST")
         exit(5)
-
-def include(name):
-    if name in mods.keys():
-        if name not in compiled:
-            compiled.append(name)
-            tolink.extend(map(lambda p : Absolute(mods[name].path+'/'+p), mods[name].files))
-        return mods[name].include()
-    elif name in libs.keys():
-        if name not in compiled:
-            compiled.append(name)
-            compilelib(name)
-            tolink.append(Relative(name+'.o'))
-        return libs[name].include()
     else:
+        return extern
+
+def include(name, ignorelibs, ignoremods):
+    extern = {}
+    if name in mods.keys() and name not in ignoremods:
+        if name not in compiled_mods:
+            compiled_mods.append(name)
+            tolink.extend(map(lambda p : Absolute(mods[name].path+'/'+p), mods[name].files))
+        extern.update(mods[name].include())
+    if name in libs.keys() and name not in ignorelibs:
+        if name not in compiled_libs:
+            compiled_libs.append(name)
+            compilelib(name, ignorelibs, ignoremods)
+            tolink.append(Relative(name+'.o'))
+        extern.update(libs[name].include())
+    if extern == {}:
         print("MODULE/LIBRARY", name, "DOES NOT EXIST")
         exit(5)
+    else:
+        return extern
 
-def genexterns(imprts, includes):
+def genexterns(imprts, includes, ignorelibs=[], ignoremods=[]):
     extern = {}
     for i in imprts:
-        fns = imprt(i)
+        fns = imprt(i, ignorelibs, ignoremods)
         inter = fns.keys() & extern.keys()
         if len(inter) > 0:
             print("NAME COLLISION(s):", inter)
             exit(6)
         extern.update(fns)
     for i in includes:
-        fns = include(i)
+        fns = include(i, ignorelibs, ignoremods)
         inter = fns.keys() & extern.keys()
         if len(inter) > 0:
             print("NAME COLLISION(s):", inter)

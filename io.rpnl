@@ -1,4 +1,4 @@
-(# library helloworld #)
+(# library io #)
 (# import io #)
 
 (export helloworld;

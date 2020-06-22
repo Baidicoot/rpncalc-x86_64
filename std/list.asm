@@ -2,6 +2,7 @@
 
 global list_cons
 global list_nil
+global list_is_nil
 
 section .text
 list_cons:
@@ -49,4 +50,21 @@ list_nil:
     push 0
     mov rax, 0x0000000300000000
     push rax
+    RETURN
+
+list_is_nil:
+    FUNCTION
+    GET_LOCAL 0
+    cmp rdx, 0
+    je .true
+.false:
+    push 0x0
+    mov rax, 0x0000000400000000
+    push rax
+    jmp .ret
+.true:
+    push 0x1
+    mov rax, 0x0000000400000000
+    push rax
+.ret:
     RETURN

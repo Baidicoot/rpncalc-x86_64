@@ -31,5 +31,31 @@ alts = ["]", ":"]
 
 [list.nil]
 name = "list_nil"
-args = 2
+args = 0
 alts = ["[]", "["]
+
+[list.is-nil]
+name = "list_is_nil"
+args = 1
+alts = ["[]?", "nil?"]
+
+[bool]
+files = ["std/bool.o"]
+
+[bool.true]
+name = "bool_true"
+args = 0
+
+[bool.false]
+name = "bool_false"
+args = 0
+
+[bool.eq]
+name = "bool_eq"
+args = 2
+alts = ["=="]
+
+[bool.if-else]
+name = "bool_if_else"
+args = 3
+alts = ["?:"]
