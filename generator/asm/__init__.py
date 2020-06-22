@@ -73,7 +73,7 @@ _0:
             out += v
     
     currdir = os.getcwd()
-    links = list(map(lambda p : currdir + '/generator/asm/build/' + p.path if p.__class__ == Relative else p.path, links))
+    links = list(map(lambda p : path[0] + '/generator/asm/build/' + p.path if p.__class__ == Relative else p.path, links))
     os.chdir(path[0]+"/generator/asm")
 
     outf = open("build/build.asm", "w+")
