@@ -1,4 +1,4 @@
 (# import io #)
-(# import bool #)
+(# include arith #)
 
-1 0 bool.==
+8 2 /

@@ -288,12 +288,9 @@ cmpmem:
     ret
 
 _start:
-    INT 0xdeaf
-    INT 0xdead
-    pop rdi
-    pop rsi
-
-    call cmpmem
+    mov rax, 8
+    mov rbx, 2
+    div rbx
 
     mov rdi, rax
     call putint

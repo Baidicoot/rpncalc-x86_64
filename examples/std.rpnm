@@ -79,3 +79,26 @@ alts = ["<<"]
 name = "mutref_get"
 args = 1
 alts = [">>"]
+
+[arith]
+files = ["std/arith.o"]
+
+[arith.add]
+name = "arith_add"
+args = 2
+alts = ["+"]
+
+[arith.sub]
+name = "arith_sub"
+args = 2
+alts = ["-"]
+
+[arith.mul]
+name = "arith_mul"
+args = 2
+alts = ["*"]
+
+[arith.div]
+name = "arith_div"
+args = 2
+alts = ["/"]
