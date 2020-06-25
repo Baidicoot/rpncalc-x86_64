@@ -45,7 +45,6 @@ extern scopelen
 @generator.generator('asm2')
 def asm(input, output, flags, extern, links):
     ops = irify(input, extern)
-    print(ops)
     a = list(map(lambda x : "".join(list(map(lambda y : y.emit(), x))), ops))
     out = ""
     for i, v in enumerate(a):

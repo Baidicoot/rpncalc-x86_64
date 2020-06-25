@@ -181,15 +181,122 @@ putll:
 .end:
     ret
 
+cmpmeta:
+    ; rdi - dataX
+    ; rsi - dataY
+    push rsi
+    call getmeta
+    pop rsi
+    push rbx
+    push rcx
+    mov rdi, rsi
+    call getmeta
+
+    pop rax
+    cmp rcx, rax
+    jne .ne
+    pop rax
+    cmp rbx, rax
+    jne .ne
+.eq:
+    mov rax, 1
+    ret
+.ne:
+    mov rax, 0
+    ret
+
+cmpdata:
+    ; rdi - dataX
+    ; rsi - dataY
+    ; rax - mem flag
+    cmp rdi, rsi
+    je .eq
+    cmp rax, 0
+    je .ne
+    call cmpmem
+    ret
+.eq:
+    mov rax, 1
+    ret
+.ne:
+    mov rax, 0
+    ret
+
+cmpmem:
+    ; rdi - X
+    ; rsi - Y
+    push rdi
+    push rsi
+    call cmpmeta
+    pop rdi
+    pop rsi
+    cmp rax, 0
+    je .ne
+
+    push rdi
+    push rsi
+    call getmeta
+    pop rsi
+    pop rdi
+.d0:
+    mov rax, rbx
+    and rax, 0b100
+    push rbx
+    push rdi
+    push rsi
+    mov rdi, [rdi+8]
+    mov rsi, [rsi+8]
+    call cmpdata
+    pop rsi
+    pop rdi
+    pop rbx
+    cmp rax, 0
+    je .ne
+.d1:
+    mov rax, rbx
+    and rax, 0b010
+    push rbx
+    push rdi
+    push rsi
+    mov rdi, [rdi+16]
+    mov rsi, [rsi+16]
+    call cmpdata
+    pop rsi
+    pop rdi
+    pop rbx
+    cmp rax, 0
+    je .ne
+.d2:
+    mov rax, rbx
+    and rax, 0b001
+    push rbx
+    push rdi
+    push rsi
+    mov rdi, [rdi+24]
+    mov rsi, [rsi+24]
+    call cmpdata
+    pop rsi
+    pop rdi
+    pop rbx
+    cmp rax, 0
+    je .ne
+.eq:
+    mov rax, 1
+    ret
+.ne:
+    mov rax, 0
+    ret
+
 _start:
-    mov rsi, 0
-    mov rdi, 0
-    call _0
+    INT 0xdeaf
+    INT 0xdead
+    pop rdi
+    pop rsi
 
-    call putll
+    call cmpmem
 
-    mov rdi, 0x0a
-    call putchar
+    mov rdi, rax
+    call putint
 
     mov rax, 60
     mov rdi, 0

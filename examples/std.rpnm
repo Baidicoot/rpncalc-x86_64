@@ -47,6 +47,11 @@ args = 0
 name = "bool_false"
 args = 0
 
+[bool.same]
+name = "bool_same"
+args = 2
+alts = ["&="]
+
 [bool.eq]
 name = "bool_eq"
 args = 2

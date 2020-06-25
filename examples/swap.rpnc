@@ -1,8 +1,4 @@
 (# import io #)
-(# include mutref #)
+(# import bool #)
 
-io.helloworld
-(ref; 0 <>)
-ref >>
-ref 3 <<
-ref >>
+1 0 bool.==
