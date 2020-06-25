@@ -120,7 +120,9 @@ def genexterns(imprts, includes, ignorelibs=[], ignoremods=[]):
         extern.update(fns)
     return extern
 
-if __name__ == "__main__":
+def compile(argv):
+    global libgen
+    global gen
     initextern()
 
     if len(argv) < 4:
@@ -131,11 +133,11 @@ if __name__ == "__main__":
     backend = argv[3]
 
     if backend not in generator.generators:
-        print("BACKEND", gen, "DOES NOT EXIST")
+        print("BACKEND", backend, "DOES NOT EXIST")
         exit(7)
     
     if backend not in generator.libgenerators:
-        print("BACKEND", gen, "DOES NOT EXIST")
+        print("BACKEND", backend, "DOES NOT EXIST")
         exit(7)
         
     gen = generator.generators[backend]
@@ -146,3 +148,6 @@ if __name__ == "__main__":
     external = genexterns(imprts, includes)
 
     gen(ast, output, argv[3:], external, tolink)
+
+if __name__ == "__main__":
+    compile(argv)
