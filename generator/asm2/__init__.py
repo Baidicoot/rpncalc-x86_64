@@ -1,8 +1,8 @@
 import generator
 import subprocess
 import os
-from generator.asm.desugar import irify
-import generator.asm.IR
+from generator.asm2.desugar import irify
+import generator.asm2.IR
 from sys import path
 from misc import Relative, Absolute
 
@@ -45,6 +45,7 @@ extern scopelen
 @generator.generator('asm2')
 def asm(input, output, flags, extern, links):
     ops = irify(input, extern)
+    print(ops)
     a = list(map(lambda x : "".join(list(map(lambda y : y.emit(), x))), ops))
     out = ""
     for i, v in enumerate(a):
@@ -60,10 +61,10 @@ global _0
 
 section .data
 heaploc: dq heap
-heapsize: dq 32*32
+heapsize: dq 4096*32
 
 section .bss
-heap: resb 32*32
+heap: resb 4096*32
 
 section .text
 _0:

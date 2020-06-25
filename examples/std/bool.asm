@@ -1,4 +1,4 @@
-%include "../../generator/asm/raw/macro.asm"
+%include "../../generator/asm2/raw/macro.asm"
 
 global bool_eq
 global bool_true
@@ -8,47 +8,40 @@ global bool_if_else
 section .text
 bool_true:
     FUNCTION
-    push 0x1
-    mov rax, 0x0000000400000000
-    push rax
+    INT 0x1
     RETURN
 
 bool_false:
     FUNCTION
-    push 0x0
-    mov rax, 0x0000000400000000
-    push rax
+    INT 0x0
     RETURN
 
 bool_eq:
     FUNCTION
     GET_LOCAL 0
-    push rdx
     push rax
     GET_LOCAL 1
-    cmp [rsp+8], rdx
-    jne .false
-    cmp [rsp], rax
-    jne .false
-.true:
-    mov qword [rsp+8], 0x1
-    jmp .ret
-.false:
-    mov qword [rsp+8], 0x0
-.ret:
-    mov rax, 0x0000000400000000
-    mov qword [rsp], rax
+    mov rbx, rax
+    pop rax
+    cmp rax, rbx
+    je .eq
+.ne:
+    INT 0x0
+    jmp .end
+.eq:
+    INT 0x1
+.end:
     RETURN
 
 bool_if_else:
     FUNCTION
     GET_LOCAL 2
-    cmp rdx, 0
+    cmp qword [rax+8], 0
     je .eq
 .ne:
     PUSH_LOCAL 0
-    jmp .ret
+    jmp .end
 .eq:
     PUSH_LOCAL 1
-.ret:
+.end:
     RETURN

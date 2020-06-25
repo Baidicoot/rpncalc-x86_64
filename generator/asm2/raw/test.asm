@@ -1,13 +1,17 @@
-%include "../../generator/asm2/raw/macro.asm"
+%include "macro.asm"
 
-global io_putint
-global io_putchar
+global heaploc
+global heapsize
+global _start
 
 section .data
 hex: db "0123456789abcdef"
+heaploc: dq heap
+heapsize: dq 4096*32
 
 section .bss
 buf: resb 16
+heap: resb 4096*32
 
 section .text
 ; converts byte to 2-digit hex (in ax)
@@ -144,28 +148,49 @@ putblock:
     call putint
     pop rdi
 
-    ; push rdi
-    ; mov rdi, [rdi+16]
-    ; call putint
-    ; pop rdi
+    push rdi
+    mov rdi, [rdi+16]
+    call putint
+    pop rdi
 
-    ; push rdi
-    ; mov rdi, [rdi+24]
-    ; call putint
-    ; pop rdi
+    push rdi
+    mov rdi, [rdi+24]
+    call putint
+    pop rdi
 .z:
     ret
 
-io_putint:
-    FUNCTION
-    GET_LOCAL 0
-    mov rdi, [rax+8]
-    call putint
-    RETURN
-
-io_putchar:
-    FUNCTION
-    GET_LOCAL 0
-    mov rdi, [rax+8]
+putll:
+    cmp rdi, 0
+    je .end
+    
+    push rdi
+    mov rdi, 0x28
     call putchar
-    RETURN
+    mov rdi, [rsp]
+    mov rdi, [rdi+16]
+    call putblock
+    mov rdi, 0x29
+    call putchar
+    mov rdi, 0x20
+    call putchar
+    pop rdi
+
+    mov rdi, [rdi+8]
+    call putll
+.end:
+    ret
+
+_start:
+    mov rsi, 0
+    mov rdi, 0
+    call _0
+
+    call putll
+
+    mov rdi, 0x0a
+    call putchar
+
+    mov rax, 60
+    mov rdi, 0
+    syscall

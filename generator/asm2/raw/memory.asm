@@ -239,6 +239,7 @@ consop: ; cons a linked list (and perform referencing)
     xor rdi, rdi
     xor rsi, rsi
 
+    mov si, 1
     mov di, 0b0000000000000110
     call memnew
     ret
@@ -251,6 +252,8 @@ consip: ; cons a linked list (don't perform any referencing)
     xor rcx, rcx
     xor rdi, rdi
     xor rsi, rsi
+
+    mov si, 1
     mov di, 0b0000000000000110
     call memnew
     ret

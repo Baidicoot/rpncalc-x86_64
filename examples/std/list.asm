@@ -1,4 +1,4 @@
-%include "../../generator/asm/raw/macro.asm"
+%include "../../generator/asm2/raw/macro.asm"
 
 global list_cons
 global list_nil
@@ -8,79 +8,54 @@ global list_uncons
 section .text
 list_cons:
     FUNCTION
-    GET_LOCAL 0
-    push rdx
-    push rax
-    call memalloc
-    mov qword [rax], 0
-    mov qword [rax+8], 1
-    pop r8
-    mov [rax+16], r8
-    pop r8
-    mov [rax+24], r8
-    push rax
+    PUSH_LOCAL 0
+    PUSH_LOCAL 1
 
-    GET_LOCAL 1
-    push rdx
-    push rax
-    call memalloc
-    mov qword [rax], 0
-    mov qword [rax+8], 1
-    pop r8
-    mov [rax+16], r8
-    pop r8
-    mov [rax+24], r8
-    push rax
+    pop rbx
+    pop rax
+    xor rcx, rcx
+    mov di, 0b110
+    mov si, 3
+    call memnew
 
-    call memalloc
-    mov qword [rax], 0
-    mov qword [rax+8], 1
-    pop r8
-    mov [rax+16], r8
-    pop r8
-    mov [rax+24], r8
-    
-    push rax
-    mov rax, 0x0000000300000000
     push rax
 
     RETURN
 
 list_nil:
     FUNCTION
-    push 0
-    mov rax, 0x0000000300000000
+    xor rax, rax
+    xor rbx, rbx
+    xor rcx, rcx
+    mov di, 0b00
+    mov si, 3
+    call memnew
+
     push rax
     RETURN
 
 list_is_nil:
     FUNCTION
     GET_LOCAL 0
-    cmp rdx, 0
+    cmp qword [rax+8], 0
     je .true
 .false:
-    push 0x0
-    mov rax, 0x0000000400000000
-    push rax
+    INT 0x0
     jmp .ret
 .true:
-    push 0x1
-    mov rax, 0x0000000400000000
-    push rax
+    INT 0x1
 .ret:
     RETURN
 
 list_uncons:
     FUNCTION
     GET_LOCAL 0
-    mov r8, [rdx+24]
-    mov r9, [r8+16]
-    mov r10, [r8+24]
-    push r10
-    push r9
-    mov r8, [rdx+16]
-    mov r9, [r8+16]
-    mov r10, [r8+24]
-    push r10
-    push r9
+    push rax
+    mov rdi, [rax+8]
+    call memref
+    pop rax
+    push rdi
+    mov rdi, [rax+16]
+    call memref
+    push rdi
     RETURN

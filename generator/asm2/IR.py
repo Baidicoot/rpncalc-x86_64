@@ -100,6 +100,7 @@ class Call(Op):
     
     def emit(self, offset=0):
         return """
+    INITCALL
     call _""" + str(self.index+offset)
     
     def __repr__(self):
@@ -122,6 +123,7 @@ class Define(Op):
 
     def emit(self, offset=0):
         return """
+    INITCALL
     call _""" + str(self.index+offset) + """
     DEFINE"""
     

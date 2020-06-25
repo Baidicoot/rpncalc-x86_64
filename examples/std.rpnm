@@ -5,14 +5,6 @@ files = ["std/io.o"]
 name = "io_putchar"
 args = 1
 
-[io.sayhi]
-name = "io_sayhi"
-args = 0
-
-[io.printscope]
-name = "io_printscope"
-args = 0
-
 [io.putint]
 name = "io_putint"
 args = 1

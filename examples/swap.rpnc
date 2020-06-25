@@ -1,1 +1,8 @@
-1 2 (a b -> b a) 1 2
+(# import io #)
+(# include mutref #)
+
+io.helloworld
+(ref; 0 <>)
+ref >>
+ref 3 <<
+ref >>
