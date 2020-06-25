@@ -144,9 +144,9 @@ def compile(argv):
     libgen = generator.libgenerators[backend]
 
     infile = open(input).read()
-    if infile[0] == "#":
-        lines = infile.splitlines()[1:]
-        infile = "\n".join(lines)
+    #if infile[0] == "#":
+    #    lines = infile.splitlines()[1:]
+    #    infile = "\n".join(lines)
     decls, ast = parser.parser.parse(infile)
     imprts, includes = parser.getexternal(decls)
     external = genexterns(imprts, includes)

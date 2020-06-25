@@ -36,6 +36,9 @@ syntax_toks = {
     'library': 'LIBRARY'
 }
 
+def t_IGNORE_COMMENT(t):
+    r"(^|\n)\#.*(?=$|\n)"
+
 def t_SYNTAX(t):
     r"\(\#|\#\)|->|'|;|\(|\)"
     t.type = syntax_toks[t.value]
