@@ -34,7 +34,7 @@ alts = ["[]?", "nil?"]
 [list.uncons]
 name = "list_uncons"
 args = 1
-alts = ["][", "/"]
+alts = ["][", "\"]
 
 [bool]
 files = ["std/bool.o"]

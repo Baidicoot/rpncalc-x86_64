@@ -4,7 +4,7 @@
 
 (export <$>; list fn ->
     []
-    '(-> list /
+    '(-> list \
         (xs x -> xs 'fn <$> x fn :))
     list []? ?:)
 
