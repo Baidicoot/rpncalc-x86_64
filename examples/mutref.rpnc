@@ -1,0 +1,6 @@
+(# include mutref #)
+
+(ref; 0 <>)
+ref >>
+ref 1 << (a->)
+ref >>

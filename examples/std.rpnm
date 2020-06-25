@@ -64,3 +64,21 @@ alts = ["=="]
 name = "bool_if_else"
 args = 3
 alts = ["?:"]
+
+[mutref]
+files = ["std/mutref.o"]
+
+[mutref.new]
+name = "mutref_new"
+args = 1
+alts = ["<>"]
+
+[mutref.set]
+name = "mutref_set"
+args = 2
+alts = ["<<"]
+
+[mutref.get]
+name = "mutref_get"
+args = 1
+alts = [">>"]

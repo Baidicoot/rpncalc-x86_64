@@ -7,6 +7,7 @@ import libraries
 import libraries.library
 import generator
 import generator.asm
+import generator.asm2
 from sys import argv
 from misc import Absolute, Relative
 
