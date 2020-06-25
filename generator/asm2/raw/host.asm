@@ -50,6 +50,27 @@ itoh:
     mov rax, rdi
     ret
 
+; writes u16 to hex in rsi
+wtoh:
+    ; di - u16
+    ; rsi - buf
+    push rdi
+    mov r11, 0
+.loop:
+    cmp r11, 2
+    je .ret
+    mov r8, 1
+    sub r8, r11
+    mov dil, [rsp+r8]
+    call mkbyte
+    mov [rsi+(r11*2)], ax
+    inc r11
+    jmp .loop
+.ret:
+    pop rdi
+    mov rax, rdi
+    ret
+
 putchar:
     ; dil - char
     push rdi
@@ -96,51 +117,44 @@ putint:
     call putstr
     ret
 
+putw:
+    ; rdi - int
+    mov rsi, buf
+    call wtoh
+
+    mov rdi, buf
+    mov rsi, 4
+    call putstr
+    ret
+
 putblock:
     ; rdi - block
-    push rdi
-    call putint
-    mov rdi, 0x0a
-    call putchar
-    pop rdi
 
     cmp rdi, 0
     je .z
 
     push rdi
-    mov rdi, [rdi]
-    call putint
-    mov rdi, 0x0a
+    mov di, [rdi+6]
+    call putw
+    mov rdi, 0x20
     call putchar
     pop rdi
 
     push rdi
     mov rdi, [rdi+8]
     call putint
-    mov rdi, 0x0a
-    call putchar
     pop rdi
 
-    push rdi
-    mov rdi, [rdi+16]
-    call putint
-    mov rdi, 0x0a
-    call putchar
-    pop rdi
+    ; push rdi
+    ; mov rdi, [rdi+16]
+    ; call putint
+    ; pop rdi
 
-    push rdi
-    mov rdi, [rdi+24]
-    call putint
-    mov rdi, 0x0a
-    call putchar
-    pop rdi
-
-    ret
+    ; push rdi
+    ; mov rdi, [rdi+24]
+    ; call putint
+    ; pop rdi
 .z:
-    push rdi
-    mov rdi, 0x0a
-    call putchar
-    pop rdi
     ret
 
 putll:
@@ -148,14 +162,14 @@ putll:
     je .end
     
     push rdi
-    mov rdi, 0x0a
+    mov rdi, 0x28
     call putchar
     mov rdi, [rsp]
     mov rdi, [rdi+16]
     call putblock
-    mov rdi, 0x0a
+    mov rdi, 0x29
     call putchar
-    mov rdi, 0x0a
+    mov rdi, 0x20
     call putchar
     pop rdi
 
@@ -170,6 +184,9 @@ _start:
     call _0
 
     call putll
+
+    mov rdi, 0x0a
+    call putchar
 
     mov rax, 60
     mov rdi, 0

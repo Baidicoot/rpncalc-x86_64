@@ -35,6 +35,7 @@ syntax_toks = {
     'export': 'EXPORT',
     'library': 'LIBRARY'
 }
+
 def t_SYNTAX(t):
     r"\(\#|\#\)|->|'|;|\(|\)"
     t.type = syntax_toks[t.value]
@@ -51,7 +52,7 @@ def t_IDENT(t):
         t.type = syntax_toks[t.value]
     return t
 
-def t_NL(t):
+def t_IGNORE_NL(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 

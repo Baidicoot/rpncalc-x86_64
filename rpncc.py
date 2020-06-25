@@ -143,7 +143,11 @@ def compile(argv):
     gen = generator.generators[backend]
     libgen = generator.libgenerators[backend]
 
-    decls, ast = parser.parser.parse(open(input).read())
+    infile = open(input).read()
+    if infile[0] == "#":
+        lines = infile.splitlines()[1:]
+        infile = "\n".join(lines)
+    decls, ast = parser.parser.parse(infile)
     imprts, includes = parser.getexternal(decls)
     external = genexterns(imprts, includes)
 
