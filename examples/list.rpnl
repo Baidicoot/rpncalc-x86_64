@@ -2,8 +2,10 @@
 (# include list #)
 (# include bool #)
 
-(export map; list fn ->
+(export <$>; list fn ->
     []
     '(-> list /
-        (xs x -> xs 'fn map x fn :))
+        (xs x -> xs 'fn <$> x fn :))
     list []? ?:)
+
+(export map; <$>)

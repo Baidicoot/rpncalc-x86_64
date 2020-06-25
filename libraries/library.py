@@ -1,6 +1,45 @@
 from typing import List, Dict, Tuple
 from parser.AST import *
 
+def sanitize(str):
+    replacements = {
+        '|': "_tok_pipe",
+        '!': "_tok_exp",
+        '`': "_tok_btick",
+        '¬': "_tok_not",
+        '$': "_tok_dollar",
+        '%': "_tok_percent",
+        '^': "_tok_uparr",
+        '&': "_tok_amp",
+        '*': "_tok_asterisk",
+        '_': "_tok_underscore",
+        '-': "_tok_minus",
+        '+': "_tok_plus",
+        '=': "_tok_equals",
+        '{': "_tok_lcurly",
+        '[': "_tok_lsquare",
+        '}': "_tok_rcurly",
+        ']': "_tok_rsquare",
+        ':': "_tok_colon",
+        '@': "_tok_at",
+        '~': "_tok_tilde",
+        '#': "_tok_sharp",
+        '<': "_tok_rangled",
+        ',': "_tok_comma",
+        '>': "_tok_langled",
+        '.': "_tok_period",
+        '?': "_tok_question",
+        '/': "_tok_rslash",
+        '\\': "_tok_lslash"
+    }
+    out = ""
+    for ch in str:
+        if ch in replacements.keys():
+            out += replacements[ch]
+        else:
+            out += ch
+    return out
+
 class Library:
     def __init__(self, decls: List[Decl]):
         self.exports: Dict[str, List[Stmt]] = {}
@@ -24,10 +63,10 @@ class Library:
             raise BaseException('LIBRARY UNNAMED')
     
     def include(self) -> Dict[str, Tuple[str, int]]:
-        return {k : (self.name+'_'+k, 0) for k in self.exports.keys()}
+        return {k : (self.name+'_'+sanitize(k), 0) for k in self.exports.keys()}
     
     def imprt(self) -> Dict[str, Tuple[str, int]]:
-        return {self.name+'.'+k : (self.name+'_'+k, 0) for k in self.exports.keys()}
+        return {self.name+'.'+k : (self.name+'_'+sanitize(k), 0) for k in self.exports.keys()}
     
     def getast(self) -> Dict[str, List[Stmt]]:
-        return {self.name+'_'+k : v for k, v in self.exports.items()}
+        return {self.name+'_'+sanitize(k) : v for k, v in self.exports.items()}
