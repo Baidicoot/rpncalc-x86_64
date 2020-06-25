@@ -57,24 +57,24 @@ flags = []
 libgen = None
 gen = None
 
-def compilelib(name, ignorelibs, ignoremods):
+def compilelib(name, ignorelibs, ignoremods, backend):
     if name not in libs.keys():
         print("MODULE/LIBRARY", name, "DOES NOT EXIST")
         exit(5)
-    externs = genexterns(libs[name].imprts, libs[name].includes, [name] + ignorelibs, ignoremods)
+    externs = genexterns(libs[name].imprts, libs[name].includes, [name] + ignorelibs, ignoremods, backend)
     libgen(libs[name], name+'.o', flags, externs)
 
-def imprt(name, ignorelibs, ignoremods):
+def imprt(name, ignorelibs, ignoremods, backend):
     extern = {}
     if name in mods.keys() and name not in ignoremods:
         if name not in compiled_mods:
             compiled_mods.append(name)
-            tolink.extend(map(lambda p : Absolute(mods[name].path+'/'+p), mods[name].files))
+            tolink.extend(map(lambda p : Absolute(mods[name].path+'/'+p), mods[name].files[backend]))
         extern.update(mods[name].imprt())
     if name in libs.keys() and name not in ignorelibs:
         if name not in compiled_libs:
             compiled_libs.append(name)
-            compilelib(name, ignorelibs, ignoremods)
+            compilelib(name, ignorelibs, ignoremods, backend)
             tolink.append(Relative(name+'.o'))
         extern.update(libs[name].imprt())
     if extern == {}:
@@ -83,17 +83,17 @@ def imprt(name, ignorelibs, ignoremods):
     else:
         return extern
 
-def include(name, ignorelibs, ignoremods):
+def include(name, ignorelibs, ignoremods, backend):
     extern = {}
     if name in mods.keys() and name not in ignoremods:
         if name not in compiled_mods:
             compiled_mods.append(name)
-            tolink.extend(map(lambda p : Absolute(mods[name].path+'/'+p), mods[name].files))
+            tolink.extend(map(lambda p : Absolute(mods[name].path+'/'+p), mods[name].files[backend]))
         extern.update(mods[name].include())
     if name in libs.keys() and name not in ignorelibs:
         if name not in compiled_libs:
             compiled_libs.append(name)
-            compilelib(name, ignorelibs, ignoremods)
+            compilelib(name, ignorelibs, ignoremods, backend)
             tolink.append(Relative(name+'.o'))
         extern.update(libs[name].include())
     if extern == {}:
@@ -102,17 +102,17 @@ def include(name, ignorelibs, ignoremods):
     else:
         return extern
 
-def genexterns(imprts, includes, ignorelibs=[], ignoremods=[]):
+def genexterns(imprts, includes, ignorelibs, ignoremods, backend):
     extern = {}
     for i in imprts:
-        fns = imprt(i, ignorelibs, ignoremods)
+        fns = imprt(i, ignorelibs, ignoremods, backend)
         inter = fns.keys() & extern.keys()
         if len(inter) > 0:
             print("NAME COLLISION(s):", inter)
             exit(6)
         extern.update(fns)
     for i in includes:
-        fns = include(i, ignorelibs, ignoremods)
+        fns = include(i, ignorelibs, ignoremods, backend)
         inter = fns.keys() & extern.keys()
         if len(inter) > 0:
             print("NAME COLLISION(s):", inter)
@@ -149,7 +149,7 @@ def compile(argv):
     #    infile = "\n".join(lines)
     decls, ast = parser.parser.parse(infile)
     imprts, includes = parser.getexternal(decls)
-    external = genexterns(imprts, includes)
+    external = genexterns(imprts, includes, [], [], backend)
 
     gen(ast, output, argv[3:], external, tolink)
 

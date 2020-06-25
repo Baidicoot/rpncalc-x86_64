@@ -2,7 +2,7 @@ from typing import List, Dict, Tuple, Optional
 import toml
 
 class Module:
-    def __init__(self, name: str, files: List[str], fns: Dict[str, Tuple[str, int]], path: str):
+    def __init__(self, name: str, files: Dict[str, List[str]], fns: Dict[str, Tuple[str, int]], path: str):
         self.name = name
         self.files = files
         self.fns = fns
@@ -18,7 +18,7 @@ def parsemod(str: str, path) -> Optional[List[Module]]:
     mods = toml.loads(str)
     parsed = []
     for name, data in mods.items():
-        if type(data['files']) != list or len(data['files']) < 1:
+        if type(data['files']) != dict:
             return None
         files = data['files']
         keys = set(data.keys())

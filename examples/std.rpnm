@@ -1,5 +1,6 @@
 [io]
-files = ["std/io.o"]
+[io.files]
+asm2 = ["std/io.o"]
 
 [io.putchar]
 name = "io_putchar"
@@ -14,7 +15,8 @@ name = "io_putbyte"
 args = 1
 
 [list]
-files = ["std/list.o"]
+[list.files]
+asm2 = ["std/list.o"]
 
 [list.cons]
 name = "list_cons"
@@ -34,10 +36,11 @@ alts = ["[]?", "nil?"]
 [list.uncons]
 name = "list_uncons"
 args = 1
-alts = ["][", "\"]
+alts = ["][", "\\"]
 
 [bool]
-files = ["std/bool.o"]
+[bool.files]
+asm2 = ["std/bool.o"]
 
 [bool.true]
 name = "bool_true"
@@ -63,7 +66,8 @@ args = 3
 alts = ["?:"]
 
 [mutref]
-files = ["std/mutref.o"]
+[mutref.files]
+asm2 = ["std/mutref.o"]
 
 [mutref.new]
 name = "mutref_new"
@@ -81,7 +85,8 @@ args = 1
 alts = [">>"]
 
 [arith]
-files = ["std/arith.o"]
+[arith.files]
+asm2 = ["std/arith.o"]
 
 [arith.add]
 name = "arith_add"
