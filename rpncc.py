@@ -20,6 +20,7 @@ mods = {}
 libs = {}
 
 def loadmods(file):
+    print("parsing modules in " + file + "... ", end="")
     mod = modules.parsemod(open(file).read(), os.path.abspath(os.path.dirname(file)))
     if mod is None:
         print("COULD NOT PARSE MODULE FILE", file)
@@ -29,8 +30,10 @@ def loadmods(file):
             print("MODULE", m.name, "IS REDEFINED IN FILE", file)
             exit(2)
         mods[m.name] = m
+    print("done.")
 
 def loadlib(file):
+    print("parsing library " + file + "... ", end="")
     lib = libraries.parselib(open(file).read())
     if lib is None:
         print("COULD NOT PARSE LIB FILE", file)
@@ -39,6 +42,7 @@ def loadlib(file):
         print("LIBRARY", lib.name, "IS REDEFINED IN FILE", file)
         exit(4)
     libs[lib.name] = lib
+    print("done.")
 
 def initextern():
     files = getfiles()
@@ -62,7 +66,9 @@ def compilelib(name, ignorelibs, ignoremods, backend):
         print("MODULE/LIBRARY", name, "DOES NOT EXIST")
         exit(5)
     externs = genexterns(libs[name].imprts, libs[name].includes, [name] + ignorelibs, ignoremods, backend)
+    print("compiling library " + name + "... ", end="")
     libgen(libs[name], name+'.o', flags, externs)
+    print("done.")
 
 def imprt(name, ignorelibs, ignoremods, backend):
     extern = {}
@@ -157,7 +163,9 @@ def compile(argv):
     imprts, includes = parser.getexternal(decls)
     external = genexterns(imprts, includes, [], [], backend)
 
+    print("compiling " + input + "... ", end="")
     gen(ast, output, argv[3:], external, tolink)
+    print("compiled succesfully.")
 
 if __name__ == "__main__":
     compile(argv)

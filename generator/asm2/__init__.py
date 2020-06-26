@@ -5,40 +5,47 @@ from generator.asm2.desugar import irify
 import generator.asm2.IR
 from sys import path
 from misc import Relative, Absolute
+from generator.asm2.cache import *
 
 @generator.libgenerator('asm2')
 def libasm(input, output, flags, ext):
-    offset = 0
-    asts = input.getast()
-    extern = {**ext, **input.include()}
-    out = []
-    for sym, ast in asts.items():
-        ops = irify(ast, extern)
-        blocks = list(map(lambda x : "".join(list(map(lambda y : y.emit(offset), x))), ops))
-        thisout = sym + """:
+    currdir = os.getcwd()
+    os.chdir(path[0]+"/generator/asm2")
+
+    if cached(input):
+        print(input.name, "was cached... ", end="")
+    else:
+        offset = 0
+        asts = input.getast()
+        extern = {**ext, **input.include()}
+        out = []
+        for sym, ast in asts.items():
+            ops = irify(ast, extern)
+            blocks = list(map(lambda x : "".join(list(map(lambda y : y.emit(offset), x))), ops))
+            thisout = sym + """:
     FUNCTION""" + blocks[0] + """
     RETURN"""
-        for i in range(1, len(blocks)):
-            thisout += "\n_"+str(offset+i)+":\n    FUNCTION"
-            thisout += blocks[i]
-        out.append(thisout)
-        offset += len(blocks)
-    header = """
+            for i in range(1, len(blocks)):
+                thisout += "\n_"+str(offset+i)+":\n    FUNCTION"
+                thisout += blocks[i]
+            out.append(thisout)
+            offset += len(blocks)
+        header = """
 %include "raw/macro.asm"
 """ + "\n".join(["extern "+n for n, _ in ext.values()]) + """
 extern scopemem
 extern scopelen
 """ + "\n".join(["global "+n for n in asts.keys()])
-    gen_asm = header + "\n\n" + "\n".join(out)
+        gen_asm = header + "\n\n" + "\n".join(out)
 
-    currdir = os.getcwd()
-    os.chdir(path[0]+"/generator/asm2")
+        outf = open("build/"+input.name+".asm", "w+")
+        outf.write(gen_asm)
+        outf.close()
 
-    outf = open("build/"+input.name+".asm", "w+")
-    outf.write(gen_asm)
-    outf.close()
+        subprocess.run(['nasm', '-felf64', 'build/'+input.name+'.asm', '-o', 'build/'+output])
 
-    subprocess.run(['nasm', '-felf64', 'build/'+input.name+'.asm', '-o', 'build/'+output])
+        print("caching "+input.name, end="... ")
+        cache(input)
 
     os.chdir(currdir)
 

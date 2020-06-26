@@ -28,6 +28,12 @@ class Import(Decl):
     
     def __repr__(self):
         return "Import(" + self.name + ")"
+    
+    def __eq__(self, other):
+        if isinstance(other, Import):
+            return other.name == self.name
+        else:
+            return False
 
 class Include(Decl):
     def __init__(self, file: str):
@@ -36,6 +42,12 @@ class Include(Decl):
     def __repr__(self):
         return "Include(" + self.name + ")"
     
+    def __eq__(self, other):
+        if isinstance(other, Include):
+            return other.name == self.name
+        else:
+            return False
+    
 class Export(Decl):
     def __init__(self, name: str, exprs: List[Stmt]):
         self.name = name
@@ -43,6 +55,12 @@ class Export(Decl):
     
     def __repr__(self):
         return "Export(" + self.name + "," + str(self.exprs) + ")"
+    
+    def __eq__(self, other):
+        if isinstance(other, Export):
+            return other.name == self.name and other.exprs == self.exprs
+        else:
+            return False
 
 class LibName(Decl):
     def __init__(self, name: str):
@@ -50,6 +68,12 @@ class LibName(Decl):
     
     def __repr__(self):
         return "Lib("+self.name+")"
+    
+    def __eq__(self, other):
+        if isinstance(other, LibName):
+            return other.name == self.name
+        else:
+            return False
 
 class Push(Stmt):
     def __init__(self, expr: Expr):
@@ -57,6 +81,12 @@ class Push(Stmt):
     
     def __repr__(self):
         return "Push(" + repr(self.elem) + ")"
+    
+    def __eq__(self, other):
+        if isinstance(other, Push):
+            return other.elem == self.elem
+        else:
+            return False
 
 class SingleExpr(Stmt):
     def __init__(self, expr: Expr):
@@ -64,6 +94,12 @@ class SingleExpr(Stmt):
     
     def __repr__(self):
         return "SExpr(" + repr(self.elem) + ")"
+    
+    def __eq__(self, other):
+        if isinstance(other, SingleExpr):
+            return other.elem == self.elem
+        else:
+            return False
 
 class Definition(Stmt):
     def __init__(self, name: str, exprs: List[Stmt]):
@@ -72,6 +108,12 @@ class Definition(Stmt):
     
     def __repr__(self):
         return "Definition(" + repr(self.ident) + "," + repr(self.body) + ")"
+    
+    def __eq__(self, other):
+        if isinstance(other, Definition):
+            return other.body == self.body and self.ident == other.ident
+        else:
+            return False
 
 class Int(Expr):
     def __init__(self, val: int):
@@ -79,6 +121,12 @@ class Int(Expr):
     
     def __repr__(self):
         return "Int(" + repr(self.val) + ")"
+    
+    def __eq__(self, other):
+        if isinstance(other, Int):
+            return other.val == self.val
+        else:
+            return False
 
 class Str(Expr):
     def __init__(self, val: str):
@@ -86,6 +134,12 @@ class Str(Expr):
     
     def __repr__(self):
         return "Str(" + repr(self.val) + ")"
+    
+    def __eq__(self, other):
+        if isinstance(other, Str):
+            return other.val == self.val
+        else:
+            return False
 
 class Ident(Expr):
     def __init__(self, name: str):
@@ -93,6 +147,12 @@ class Ident(Expr):
     
     def __repr__(self):
         return "Ident(" + repr(self.name) + ")"
+    
+    def __eq__(self, other):
+        if isinstance(other, Ident):
+            return other.name == self.name
+        else:
+            return False
 
 class Lambda(Expr):
     def __init__(self, args: List[str], body: List[Stmt]):
@@ -101,3 +161,9 @@ class Lambda(Expr):
     
     def __repr__(self):
         return "Lambda(" + repr(self.args) + "," + repr(self.body) + ")"
+    
+    def __eq__(self, other):
+        if isinstance(other, Lambda):
+            return other.args == self.args and other.body == self.body
+        else:
+            return False

@@ -70,3 +70,9 @@ class Library:
     
     def getast(self) -> Dict[str, List[Stmt]]:
         return {self.name+'_'+sanitize(k) : v for k, v in self.exports.items()}
+    
+    def __eq__(self, other):
+        if isinstance(other, Library):
+            return self.exports == other.exports and self.imprts == other.imprts and self.includes == other.includes and self.name == other.name
+        else:
+            return False
