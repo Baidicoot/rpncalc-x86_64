@@ -92,9 +92,27 @@ extern givearg
     mov %1, rax
 %endmacro
 
-%macro INITCALL 0
-    mov rdi, LOCAL_RETURN
+%macro DROP 1
     mov rsi, LOCAL_SCOPE
+%rep %1
+    mov rsi, [rsi+8]
+%endrep
+%endmacro
+
+%macro INITCALL 0
+    mov rdi, LOCAL_SCOPE
+    call memref
+    mov rsi, rdi
+    mov rdi, LOCAL_RETURN
+    call memref
+%endmacro
+
+%macro INITCALL 2
+    mov rdi, %1
+    call memref
+    mov rdi, rsi
+    mov rdi, %2
+    call memref
 %endmacro
 
 %macro CLOSURE 3

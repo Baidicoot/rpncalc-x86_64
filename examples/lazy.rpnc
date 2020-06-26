@@ -1,0 +1,11 @@
+# lazy list example/test
+(# include list #)
+(# include arith #)
+
+(fib; a b ->
+    '(->b a b + fib) b :)
+
+(count; x ->
+    '(->x 1 + count) x :)
+
+0 1 fib \ (a b -> b a) \ (a b -> b a) \ (a b -> b a) \ (a b -> b a) \ (a b -> b a) \ (a b -> b a)

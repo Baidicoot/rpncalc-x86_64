@@ -6,13 +6,16 @@ T = TypeVar('T')
 class Maybe(Generic[T]):
     def __init__(self, val: T):
         self.val: T = val
-        self.isNothing = val == None
+        self.isNothing = val is None
     
     def unwrap(self, msg='unwrap ERROR: cannot unwrap a Nothing value') -> T:
         if (self.val == None):
             raise BaseException(msg)
         else:
             return self.val
+    
+    def __repr__(self):
+        return "Nothing" if self.isNothing else "Just(" + str(self.val) + ")"
 
 def Nothing() -> Maybe[T]:
         return Maybe(None)
@@ -61,10 +64,10 @@ class Walker:
     
     def index(self, name: str) -> Maybe[Addr]:
         count = 0
-        for ident, _, scope in self.bound:
+        for ident, index, scope in self.bound:
             if not ident.isNothing:
                 if ident.unwrap() == name:
-                    return Just(Rec(count))
+                    return Just(Rec(index, count))
             for s in scope:
                 if s == name:
                     return Just(Bound(count))
@@ -98,7 +101,7 @@ def desugar(ctx: Walker, s: Stmt) -> Walker:
                     return ctx.write([Builtin(ext[0], ext[1])])
             addr = a.unwrap()
             if addr.__class__ == Rec:
-                return ctx.write([Closure(addr.index, 0)])
+                return ctx.write([Closure(addr.index, 0, addr.dropn)])
             elif addr.__class__ == Bound:
                 return ctx.write([Local(addr.index)])
         elif c == Lambda:
@@ -124,7 +127,7 @@ def desugar(ctx: Walker, s: Stmt) -> Walker:
                     return ctx.write([Builtin(ext[0], ext[1]), Apply()])
             addr = a.unwrap()
             if addr.__class__ == Rec:
-                return ctx.write([Call(addr.index)])
+                return ctx.write([Closure(addr.index, 0, addr.dropn), Apply()])
             elif addr.__class__ == Bound:
                 return ctx.write([Local(addr.index), Apply()])
         elif c == Lambda:

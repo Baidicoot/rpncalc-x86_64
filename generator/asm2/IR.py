@@ -50,8 +50,9 @@ class Addr:
     pass
 
 class Rec(Addr):
-    def __init__(self, i):
+    def __init__(self, i, d):
         self.index = i
+        self.dropn = d
 
 class Bound(Addr):
     def __init__(self, i):
@@ -98,10 +99,11 @@ class Call(Op):
     def __init__(self, index: int):
         self.index = index
     
-    def emit(self, offset=0):
+    def emit(self, offset=0): # need . to . fix
         return """
     INITCALL
-    call _""" + str(self.index+offset)
+    call _""" + str(self.index+offset) + """
+    MERGE"""
     
     def __repr__(self):
         return "Call(" + str(self.index) + ")"
@@ -131,12 +133,19 @@ class Define(Op):
         return "Define(" + str(self.index) + ")"
 
 class Closure(Op):
-    def __init__(self, index, nargs):
+    def __init__(self, index, nargs, dropn=0):
         self.index = index
         self.nargs = nargs
+        self.dropn = dropn
     
     def emit(self, offset=0):
-        return """
+        if self.dropn > 0:
+            return """
+    mov r11, _""" + str(self.index+offset) + """
+    DROP """ + str(self.dropn) + """
+    CLOSURE r11, """ + str(self.nargs) + ", rsi"
+        else:
+            return """
     mov r11, _""" + str(self.index+offset) + """
     mov rsi, LOCAL_SCOPE
     CLOSURE r11, """ + str(self.nargs) + ", rsi"

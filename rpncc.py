@@ -69,6 +69,9 @@ def imprt(name, ignorelibs, ignoremods, backend):
     if name in mods.keys() and name not in ignoremods:
         if name not in compiled_mods:
             compiled_mods.append(name)
+            if backend not in mods[name].files.keys():
+                print("BACKEND", backend, "DOES NOT EXIST FOR LIBRARY", name)
+                exit(8)
             tolink.extend(map(lambda p : Absolute(mods[name].path+'/'+p), mods[name].files[backend]))
         extern.update(mods[name].imprt())
     if name in libs.keys() and name not in ignorelibs:
@@ -88,6 +91,9 @@ def include(name, ignorelibs, ignoremods, backend):
     if name in mods.keys() and name not in ignoremods:
         if name not in compiled_mods:
             compiled_mods.append(name)
+            if backend not in mods[name].files.keys():
+                print("BACKEND", backend, "DOES NOT EXIST FOR LIBRARY", name)
+                exit(8)
             tolink.extend(map(lambda p : Absolute(mods[name].path+'/'+p), mods[name].files[backend]))
         extern.update(mods[name].include())
     if name in libs.keys() and name not in ignorelibs:
