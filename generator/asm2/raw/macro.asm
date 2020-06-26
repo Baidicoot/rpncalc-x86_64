@@ -17,6 +17,9 @@ extern consop
 extern givearg
 
 %macro FUNCTION 0
+    ; initialisation macro for functions
+    ; saves rbp for parent function & updates to point to base of this stack
+    ; pushes pointer to local scope (ll of objects) and 'return stack' (ll of objects)
     push rbp
     mov rbp, rsp
     sub rsp, 16
@@ -34,6 +37,7 @@ extern givearg
 %endmacro
 
 %macro PUSH_LOCAL 1
+    ; references & pushes an indexed local to the stack
     mov rsi, %1
     mov rdi, LOCAL_SCOPE
     call indexll
@@ -43,6 +47,7 @@ extern givearg
 %endmacro
 
 %macro GET_LOCAL 1
+    ; like push_local, but does not ref or push
     mov rsi, %1
     mov rdi, LOCAL_SCOPE
     call indexll
@@ -55,6 +60,8 @@ extern givearg
 %endmacro
 
 %macro RETURN 0
+    ; extends the return stack with all the values on the current stack frame
+    ; unwinds to rbp, derefs local scope, returns ptr to return stack in rax
     GET_NELEMS
     mov rdi, LOCAL_RETURN
 %%loop:
@@ -79,6 +86,7 @@ extern givearg
 %endmacro
 
 %macro DEFINE 0
+    ; cons rax & local scope
     mov rdi, LOCAL_SCOPE
     mov rsi, rax
     call consip
@@ -86,6 +94,7 @@ extern givearg
 %endmacro
 
 %macro BIND 1
+    ; probably not used? cons value & arbitrary scope in %1
     mov rdi, %1
     pop rsi
     call consip
@@ -93,6 +102,7 @@ extern givearg
 %endmacro
 
 %macro DROP 1
+    ; retrive a scope without the top %1 values
     mov rsi, LOCAL_SCOPE
 %rep %1
     mov rsi, [rsi+8]
@@ -100,6 +110,8 @@ extern givearg
 %endmacro
 
 %macro INITCALL 0
+    ; also maybe not used?
+    ; stores & references local scope and return stack for passing to function
     mov rdi, LOCAL_SCOPE
     call memref
     mov rsi, rdi
@@ -108,6 +120,7 @@ extern givearg
 %endmacro
 
 %macro INITCALL 2
+    ; pbbly not used, similar to INITCALL
     mov rdi, %1
     call memref
     mov rdi, rsi
@@ -116,6 +129,8 @@ extern givearg
 %endmacro
 
 %macro CLOSURE 3
+    ; create closure around fn %1, with %2 values and scope %3
+    ; references %3/scope
     push %1
     push %2
     mov rdi, %3
@@ -141,11 +156,13 @@ extern givearg
 
 ; not typechecked
 %macro APPLY 1
+    ; applies a closure in %1 to the stack using a return stack in rax
     ; rax - return stack
     ; %1 - closure
     mov rsi, %1
     GET_NELEMS
 %%apply:
+    ; checks if the closure is fully evalulated, if so execute, else pop value off and give to closure
     cmp qword [rsi+24], 0
     je %%exec
     cmp r8, 0
@@ -169,6 +186,10 @@ extern givearg
 %endmacro
 
 %macro MERGE 0
+    ; merge return stack with actual stack
+    ; iterates through return stack ll, applying values it finds
+    ; if it finds a closure, it applies it to the stack, calling it if it needs to
+    ; passing in the remainder of the return stack to the closure
 %%merge:
     cmp rax, 0
     je %%end
@@ -186,12 +207,14 @@ extern givearg
     push rbx
     jmp %%merge
 %%closure:
+    ; applying the closure basically updates rax with [new returns] + [remainder of return stack]
     APPLY rbx
     jmp %%merge
 %%end:
 %endmacro
 
 %macro RESOLVE 0
+    ; pops value off stack, tries to either merge it or apply it
     mov rdi, [rsp]
     call getmeta
     cmp cx, 0

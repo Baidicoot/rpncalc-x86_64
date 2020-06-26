@@ -1,11 +1,18 @@
 (# library list #)
 (# include list #)
 (# include bool #)
+(# include arith #)
 
 (export <$>; list fn ->
     []
     '(-> list \
         (xs x -> xs 'fn <$> x fn :))
     list []? ?:)
+
+(export !!; list index ->
+    list \ (xs x ->
+        x
+        '(->xs index 1 - !!)
+        index 0 == ?:))
 
 (export map; <$>)

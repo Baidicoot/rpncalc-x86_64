@@ -2,10 +2,12 @@
 (# include list #)
 (# include arith #)
 
+(swap; a b -> b a)
+
 (fib; a b ->
     '(->b a b + fib) b :)
 
 (count; x ->
     '(->x 1 + count) x :)
 
-0 1 fib \ (a b -> b a) \ (a b -> b a) \ (a b -> b a) \ (a b -> b a) \ (a b -> b a) \ (a b -> b a)
+0 1 fib 30 !!
