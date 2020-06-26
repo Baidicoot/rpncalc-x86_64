@@ -1,6 +1,7 @@
 # lazy list example/test
 (# include list #)
 (# include arith #)
+(# import io #)
 
 (swap; a b -> b a)
 

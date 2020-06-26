@@ -1,9 +1,9 @@
 (# library io #)
 (# import io #)
+(# include list #)
+
+(export putstr; str ->
+    str 0 '(z ch -> ch io.putchar z) +> (z->))
 
 (export helloworld;
-    10 33 100 108 114 111 87 32 44 111 108 108 101 72
-    io.putchar io.putchar io.putchar io.putchar io.putchar io.putchar
-    io.putchar
-    io.putchar io.putchar io.putchar io.putchar io.putchar io.putchar
-    io.putchar)
+    [ 72 : 101 : 108 : 108 : 111 : 44 : 32 : 87 : 111 : 114 : 108 : 100 : 33 : 10 ] putstr)

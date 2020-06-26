@@ -15,4 +15,18 @@
         '(->xs index 1 - !!)
         index 0 == ?:))
 
+(export <+; list acc fn ->
+    acc
+    '(-> list \
+        (xs x -> xs x acc fn 'fn <+))
+    list []? ?:)
+
+(export +>; list acc fn ->
+    acc
+    '(-> list \
+        (xs x -> xs acc 'fn +> x fn))
+    list []? ?:)
+
+(export sum; xs -> xs 0 '+ <+)
+
 (export map; <$>)

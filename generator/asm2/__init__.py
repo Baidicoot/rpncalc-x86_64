@@ -81,12 +81,14 @@ _0:
     outf.write(out)
     outf.close()
 
+    if '-pre' in flags:
+        subprocess.run(['nasm', '-felf64', 'build/build.asm', '-o', currdir+'/'+output, '-E'])
+        os.chdir(currdir)
+        return
+
     subprocess.run(['nasm', '-felf64', 'build/build.asm', '-o', 'build/build.o'])
 
-    if ('-glibc' in flags):
-        subprocess.run(['gcc', 'raw/host.c', 'build/build.o', 'raw/memory.o', '-o', 'build/build.out'] + links)
-    else:
-        subprocess.run(['ld', 'raw/host.o', 'build/build.o', 'raw/memory.o', '-o', 'build/build.out', '-Os', '-Ns'] + links)
+    subprocess.run(['ld', 'raw/host.o', 'build/build.o', 'raw/memory.o', '-o', 'build/build.out', '-Os', '-Ns'] + links)
 
     os.rename('build/build.out', currdir+"/"+output)
 
