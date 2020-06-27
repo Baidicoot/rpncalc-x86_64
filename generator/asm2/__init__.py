@@ -58,7 +58,7 @@ def asm(input, output, flags, extern, links):
         if i == 0:
             out = """
 %include "raw/macro.asm"
-%define BLOCKS 4096
+%define BLOCKS 32768
 
 global heaploc
 global heapsize
@@ -67,10 +67,10 @@ global _0
 
 section .data
 heaploc: dq heap
-heapsize: dq 4096*32
+heapsize: dq BLOCKS*32
 
 section .bss
-heap: resb 4096*32
+heap: resb BLOCKS*32
 
 section .text
 _0:

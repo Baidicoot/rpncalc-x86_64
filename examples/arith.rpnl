@@ -1,0 +1,11 @@
+(# library arith #)
+(# include arith #)
+(# include bool #)
+
+(export ++; 1 +)
+(export --; 1 -)
+
+(export !; x ->
+    1
+    '(->x -- ! x *)
+    x 0 == ?:)

@@ -2,12 +2,9 @@
 (# include list #)
 (# include arith #)
 (# import io #)
-(output; xs -> xs 0 '(x z -> x io.putint 10 io.putchar z) <+)
+(output; xs -> xs 0 '(x z -> x io.putint 10 io.putchar z) <+ (z->))
 
 (fib; a b ->
     '(->b a b + fib) b :)
 
-(repeat; x ->
-    '(->x repeat) x :)
-
-65 repeat io.putstr
+65 repeat 10 take io.putstr
