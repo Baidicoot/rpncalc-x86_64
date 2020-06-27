@@ -170,8 +170,10 @@ extern givearg
     dec r8
     pop rdi
     push rax
+    push r8
     call givearg
     mov rsi, rax
+    pop r8
     pop rax
     jmp %%apply
 %%exec:

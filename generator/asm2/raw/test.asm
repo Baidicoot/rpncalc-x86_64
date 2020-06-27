@@ -287,13 +287,20 @@ cmpmem:
     mov rax, 0
     ret
 
-_start:
-    mov rax, 8
-    mov rbx, 2
-    div rbx
+_1:
+    FUNCTION
+    RETURN
 
-    mov rdi, rax
-    call putint
+_0:
+    FUNCTION
+    CLOSURE _1, 2, 0
+    RESOLVE
+    RETURN
+
+_start:
+    mov rdi, 0
+    mov rsi, 0
+    call _0
 
     mov rax, 60
     mov rdi, 0

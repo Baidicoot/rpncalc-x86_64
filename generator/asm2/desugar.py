@@ -112,7 +112,7 @@ def desugar(ctx: Walker, s: Stmt) -> Walker:
             ctx = ctx.write([Ret()]).end_block()
             return ctx.write([Closure(index, len(e.args))])
         else:
-            return ctx.write([literal(e)])
+            return ctx.write(literal(e))
     elif c == SingleExpr:
         e = s.elem
         c = s.elem.__class__
@@ -138,7 +138,7 @@ def desugar(ctx: Walker, s: Stmt) -> Walker:
             ctx = ctx.write([Ret()]).end_block()
             return ctx.write([Closure(index, len(e.args)), Apply()])
         else:
-            return ctx.write([literal(e)])
+            return ctx.write(literal(e))
     elif c == Definition:
         index = ctx.newindex()
         ctx = ctx.make_block(name=Just(s.ident))
@@ -148,7 +148,13 @@ def desugar(ctx: Walker, s: Stmt) -> Walker:
         return ctx.write([Define(index)])
 
 def literal(e):
-    return Bytes(e.val)
+    if isinstance(e, Str):
+        out = [Builtin("list_nil", 0), Apply()]
+        for ch in e.val[::-1]:
+            out.extend([Bytes(ord(ch)), Builtin("list_cons", 2), Apply()])
+        return out
+    elif isinstance(e, Int):
+        return [Bytes(e.val)]
 
 def irify(stmts: List[Stmt], extern: Dict[str, Tuple[str, int]], length=False):
     ctx = Walker([(Nothing(), 0, [])], [Nothing()], [[]], [0], extern)

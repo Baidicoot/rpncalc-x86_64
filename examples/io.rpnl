@@ -3,7 +3,7 @@
 (# include list #)
 
 (export putstr; str ->
-    str 0 '(z ch -> ch io.putchar z) +> (z->))
+    str 0 '(ch z -> ch io.putchar z) <+ (z->))
 
 (export helloworld;
-    [ 72 : 101 : 108 : 108 : 111 : 44 : 32 : 87 : 111 : 114 : 108 : 100 : 33 : 10 ] putstr)
+    `Hello, World!` putstr)

@@ -29,4 +29,8 @@
 
 (export sum; xs -> xs 0 '+ <+)
 
+(export prod; xs -> xs 0 '* <+)
+
+(export v; !!)
+
 (export map; <$>)
