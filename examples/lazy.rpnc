@@ -7,4 +7,4 @@
 (fib; a b ->
     '(->b a b + fib) b :)
 
-65 repeat 10 take io.putstr
+65 repeat io.putstr

@@ -31,6 +31,8 @@ extern heapsize ; global variable with current heap size (in bytes)
 extern putint
 extern putchar
 extern putblock
+extern putstr
+extern putint
 
 global getmeta
 global getdata
@@ -44,6 +46,11 @@ global consip
 global unconsop
 global consop
 global givearg
+
+section .text
+drop_msg: db "drop: "
+alloc_msg: db "alloc: "
+alloc_err: db "failed to allocate", 0x0a
 
 section .text
 getmeta: ; get metadata about a block from a pointer
@@ -71,13 +78,43 @@ memalloc: ; return a pointer to an unallocated block
     cmp rbx, rax
     jne .loop
 .err:
-    mov rax, 0
-    ret
+    mov rax, 2
+    mov rdx, alloc_err
+    mov rsi, 19
+    mov rdi, 1
+    syscall
+
+    mov rax, 60
+    mov rdi, 0
+    syscall
 .ret:
+    ; push rax
+    ; mov rdi, alloc_msg
+    ; mov rsi, 7
+    ; call putstr
+    ; pop rax
+
+    ; push rax
+    ; mov rdi, rax
+    ; call putint
+    ; mov rdi, 0x0a
+    ; call putchar
+    ; pop rax
+
     ret
 
 memdrop: ; deref a peice of memory
     ; rdi - block ptr
+    ; push rdi
+    ; mov rdi, drop_msg
+    ; mov rsi, 6
+    ; call putstr
+    ; pop rdi
+
+    ; push rdi
+    ; call putblock
+    ; pop rdi
+
     cmp rdi, 0
     je .ret
 
@@ -92,6 +129,7 @@ memdrop: ; deref a peice of memory
     and ax, bx
     cmp ax, 0
     je .d1
+
     push rdi
     push rbx
     mov rdi, [rdi+8]

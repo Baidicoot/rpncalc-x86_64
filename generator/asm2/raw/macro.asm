@@ -16,6 +16,10 @@ extern unconsop
 extern consop
 extern givearg
 
+extern putw
+extern putchar
+extern putblock
+
 %macro FUNCTION 0
     ; initialisation macro for functions
     ; saves rbp for parent function & updates to point to base of this stack
@@ -177,10 +181,13 @@ extern givearg
     pop rax
     jmp %%apply
 %%exec:
+    push rsi
     mov r8, [rsi+16]
     mov rdi, rax
     mov rsi, [rsi+8]
     call r8
+    pop rsi
+
     jmp %%end
 %%pushc:
     push rsi

@@ -1,7 +1,10 @@
-%include "macro.asm"
-
 extern _0
 global _start
+global putw
+global putchar
+global putblock
+global putstr
+global putint
 
 section .data
 hex: db "0123456789abcdef"
@@ -145,6 +148,8 @@ putblock:
     call putint
     pop rdi
 
+    ret
+
     ; push rdi
     ; mov rdi, [rdi+16]
     ; call putint
@@ -155,6 +160,11 @@ putblock:
     ; call putint
     ; pop rdi
 .z:
+    push rdi
+    mov rdi, 0x0a
+    call putchar
+    pop rdi
+
     ret
 
 putll:
