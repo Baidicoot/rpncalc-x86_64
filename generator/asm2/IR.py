@@ -70,8 +70,7 @@ class Builtin(Op):
     def emit(self, offset=0):
         return """
     mov r11, """ + self.name + """
-    mov rsi, LOCAL_SCOPE
-    CLOSURE r11, """ + str(self.nargs) + ", rsi"
+    CLOSURE r11, """ + str(self.nargs) + ", 0"
 
 class Apply(Op):
     def __init__(self):

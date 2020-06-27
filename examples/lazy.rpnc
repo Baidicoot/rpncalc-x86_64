@@ -6,5 +6,3 @@
 
 (fib; a b ->
     '(->b a b + fib) b :)
-
-65 repeat io.putstr

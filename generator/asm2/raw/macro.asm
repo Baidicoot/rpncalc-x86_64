@@ -79,10 +79,10 @@ extern putblock
     mov rdi, rax
     jmp %%loop
 %%ret:
-    push rdi
-    mov rdi, LOCAL_SCOPE
-    call memdrop
-    pop rdi
+    ; push rdi
+    ; mov rdi, LOCAL_SCOPE
+    ; call memdrop
+    ; pop rdi
     add rsp, 16
     pop rbp
     mov rax, rdi
@@ -187,6 +187,11 @@ extern putblock
     mov rsi, [rsi+8]
     call r8
     pop rsi
+
+    push rax
+    mov rdi, rsi
+    call memdrop
+    pop rax
 
     jmp %%end
 %%pushc:

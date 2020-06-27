@@ -1,4 +1,4 @@
 (# import io #)
-(# include list #)
+(# import debug #)
 
-<$>
+1 2 (a b -> a b debug.mem) debug.mem
