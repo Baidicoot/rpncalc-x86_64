@@ -6,7 +6,7 @@
 (export <$>; list fn ->
     []
     '(-> list \
-        (xs x -> xs 'fn <$> x fn :))
+        (xs x -> '(->xs 'fn <$>) x fn :))
     list []? ?:)
 
 (export !!; list index ->

@@ -2,7 +2,17 @@
 (# include list #)
 (# include arith #)
 (# import io #)
-(output; xs -> xs 0 '(x z -> x io.putint 10 io.putchar z) <+ (z->))
 
-(fib; a b ->
-    '(->b a b + fib) b :)
+(output; xs ->
+    xs 0 '(x z -> x io.putint 10 io.putchar z) <+
+    (z->))
+
+(fibbonachi;
+    (fib; a b ->
+        '(->b a b + fib) b :)
+    0 1 fib)
+
+fibbonachi
+    '(x -> x 3 +) map
+    5 take
+    output

@@ -1,0 +1,11 @@
+(# include arith #)
+(# import io #)
+
+(swap; a b -> b a)
+(rot; a b c -> b c a)
+(drop; a ->)
+
+(double; 2 *)
+(doublefour; 4 double)
+
+doublefour 3 + io.putint

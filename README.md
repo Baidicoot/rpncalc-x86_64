@@ -1,20 +1,71 @@
-# Aidan's Toy RPNCalc Compiler (ATRCC)
-N.B. To use, you will need to assemble `/generator/asm/raw/memory.asm` to `/generator/asm/raw/memory.o`, (and now `/generator/asm/raw/host.asm`) using `nasm -felf64 memory.asm` etc, otherwise you'll probably get a weird error. I patched a bug where objects were being dropped too early. Also, RPNCalcCompiled has no support for (useful) builtins - although I am working on a module system - and is mostly a proof-of-concept at this point.
+```
+                          _      _     _ 
+ ___  ___  ___  ___  ___ | | ___\  \ /  /
+|  _|| _ ||   ||  _|| _ || ||  _|\  v  /
+|_|  |  _||_|_||___||___\|_||___| \___/
+     |_|
+```
 
-This is a compiler for the RPNCalcV4 'programming' 'language' to x86_64 for **Linux** (I am not willing to mess around with the windows API, although probably could port it to Mac).
+This is a compiler for RPNCalc5, the coolest new functional, declarative and concatenative stack-based programming language around!
 
-## About RPNCalc
-RPNCalc is - wait for it - a reverse-polish notation, stack-based, calculator. It was originally envisioned by [Oliver Marks](https://osmarks.tk/) as a project for his website *ages* ago. It has since been expanded and built upon until RPNCalcV3, which had limited support for built-in higher-order functions. I decided to expand upon this and redesign RPNCalc with support for closures, lambdas and letexprs. Originally I made a JS [interpreter](https://rpn.aidanpe.duckdns.org) for RPNCalcV4, but for some reason I decided I wanted to compile it. Documentation for RPNCalcV4 is *very* sparse (I promise I'll possibly maybe get round to that), but can mostly be found with the interpreter. If you are interested in the language, I wrote a simple calculator program in it which is hosted [here](https://meta.rpn.aidanpe.duckdns.org). The source for it can be found at `/test.rpn`.
+This version compiles to x86_64 for **Linux** (I am not willing to mess around with the windows API, although probably could port it to Mac).
+
+## Language by Example
+Here's how you write the swap function:
+```
+(a b -> b a)
+```
+easy, right? You can read this as 'pop b then a, then push b then a'. That's cool, but what happens if we want to use this multiple times? Simple, let's define it, and some other functions for good measure:
+```
+(swap; a b -> b a)
+(rot; a b c -> b c a)
+(drop; a ->)
+```
+OK! To do arithmetic, import the `arith` library at the top of the file:
+```
+(# import arith #)
+```
+`arith` doesn't have a `double` operation yet... let's make one:
+```
+(double; 2 arith.*)
+```
+hmm... the `arith.` is a bit cumbersome. `include` the library to use it's namespace:
+```
+(# include arith #)
+...
+(double; 2 *)
+```
+Let's double `4` and define it as `doublefour`:
+```
+(doublefour; 4 double)
+```
+Finally, let's add 3 to it and output it in hexidecimal, by importing `io` at the top of the file:
+```
+(# import io #)
+...
+doublefour 3 + io.putint
+```
+This and other tested examples can be found in the `examples` folder (including lazy lists!).
+
+## Extra Syntax
+To force RPNCalc to push an object, simply prepend `'` to it. For example:
+```
+1 2 '+
+```
+will not add 1 and 2 but instead result in a stack containing two ints and a closure.
+
+## A bit of history
+RPNCalc is - wait for it - a reverse-polish notation, stack-based, calculator. It was originally envisioned by [Oliver Marks](https://osmarks.tk/) as a project for his website *ages* ago. It has since been expanded and built upon until RPNCalcV3, which had limited support for built-in higher-order functions. I decided to expand upon this and redesign RPNCalc with support for closures, lambdas and letexprs. Originally I made a JS [interpreter](https://rpn.aidanpe.duckdns.org) for RPNCalcV4, but for some reason I decided I wanted to compile it. Documentation for RPNCalcV4 is *very* sparse (I promise I'll possibly maybe get round to that), but can mostly be found with the interpreter. If you are interested in the language, I wrote a simple calculator program in it which is hosted [here](https://meta.rpn.aidanpe.duckdns.org). The source for it can be found at `/test.rpn`. After a while, the compiled version became different enough from the web version for me to call it RPNCalc5.
 
 ## Useage
+N.B. To use you will need to assemble the `*.asm` files (except `macro.asm`) in `/generator/asm2/raw`, and probably also create a `build` folder in `/generator/asm2/`, as git will not save empty folders. To use the standard library, you will also need to compile the `*.asm` files in `/examples/std/`.
+
 To compile, simply run `python3 <main.py location> <input file> <output file> <backend>`. Current backends are:
 
 - `asm`
 - `asm2`
 
-It is strongly advised that you use `asm2` as this has a memory system that is much more robust than that of `asm`, as well as patched memory leaks. It however does not currently implement a standard library, but this will come shortly.
-
-You might also need to create a folder named `build` in `/generator/asm`, as git seems to ignore folders with no content. To use the glibc-hosted version, pass the flag `-glibc` after the other arguments. (no `-glibc` for `asm2`)
+It is strongly advised that you use `asm2` as `asm` only exists for legacy reasons, and is incompatible with the current standard library.
 
 ## WHY PYTHON???
 I would like to have used Haskell, but for my Computer Science A-Level in 2 years we apparently have to use Python, so I thought it would be good to get some practice.
