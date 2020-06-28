@@ -7,12 +7,12 @@
     xs 0 '(x z -> x io.putint 10 io.putchar z) <+
     (z->))
 
-(fibbonachi;
+(fibonacci;
     (fib; a b ->
         '(->b a b + fib) b :)
     0 1 fib)
 
-fibbonachi
+fibonacci
     '(x -> x 3 +) map
     5 take
     output
