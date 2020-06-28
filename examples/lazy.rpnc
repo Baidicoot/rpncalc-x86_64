@@ -14,5 +14,4 @@
 
 fibbonachi
     '(x -> x 3 +) map
-    5 take
     output
