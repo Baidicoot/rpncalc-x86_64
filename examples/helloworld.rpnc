@@ -1,4 +1,4 @@
 (# import io #)
 (# include list #)
 
-`Hello, World!` (a->)
+`Hello, World!` io.putstr

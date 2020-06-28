@@ -45,7 +45,7 @@ Finally, let's add 3 to it and output it in hexidecimal, by importing `io` at th
 ...
 doublefour 3 + io.putint
 ```
-This and other tested examples can be found in the `examples` folder (including lazy lists!).
+This and other tested examples can be found in the `examples` folder (including lazy lists!), in files with a `.rpnc` ending.
 
 ## Extra Syntax
 To force RPNCalc to push an object, simply prepend `'` to it. For example:
