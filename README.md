@@ -54,6 +54,12 @@ To force RPNCalc to push an object, simply prepend `'` to it. For example:
 ```
 will not add 1 and 2 but instead result in a stack containing two ints and a closure.
 
+Strings are simply lists of ints, and so you need to `include list` in order to use them:
+```
+(# include list #)
+`Hello, RPNCalc!`
+```
+
 ## A bit of history
 RPNCalc is - wait for it - a reverse-polish notation, stack-based, calculator. It was originally envisioned by [Oliver Marks](https://osmarks.tk/) as a project for his website *ages* ago. It has since been expanded and built upon until RPNCalcV3, which had limited support for built-in higher-order functions. I decided to expand upon this and redesign RPNCalc with support for closures, lambdas and letexprs. Originally I made a JS [interpreter](https://rpn.aidanpe.duckdns.org) for RPNCalcV4, but for some reason I decided I wanted to compile it. Documentation for RPNCalcV4 is *very* sparse (I promise I'll possibly maybe get round to that), but can mostly be found with the interpreter. If you are interested in the language, I wrote a simple calculator program in it which is hosted [here](https://meta.rpn.aidanpe.duckdns.org). The source for it can be found at `/test.rpn`. After a while, the compiled version became different enough from the web version for me to call it RPNCalc5.
 
