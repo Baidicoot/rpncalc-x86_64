@@ -88,6 +88,11 @@ _0:
     outf.write(out)
     outf.close()
 
+    if '-ir' in flags:
+        os.rename('build/build.asm', currdir+'/'+output)
+        os.chdir(currdir)
+        return
+
     if '-pre' in flags:
         subprocess.run(['nasm', '-felf64', 'build/build.asm', '-o', currdir+'/'+output, '-E'])
         os.chdir(currdir)

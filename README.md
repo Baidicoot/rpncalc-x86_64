@@ -47,12 +47,17 @@ doublefour 3 + io.putint
 ```
 This and other tested examples can be found in the `examples` folder (including lazy lists!), in files with a `.rpnc` ending.
 
+## Concatenative style
+By using the `'` pseudo-op, that forces RPNCalc to push a closure onto the stack, one is able to simulate concatenative programming techniques. For example, instead of defining `sum` like:
+```
+(sum; xs -> xs 0 '+ <+)
+```
+one can use `'` to define it like:
+```
+(sum; 0 '+ '<+)
+```
+
 ## Extra Syntax
-To force RPNCalc to push an object, simply prepend `'` to it. For example:
-```
-1 2 '+
-```
-will not add 1 and 2 but instead result in a stack containing two ints and a closure.
 
 Strings are simply lists of ints, and so you need to `include list` in order to use them:
 ```

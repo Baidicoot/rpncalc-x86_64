@@ -27,9 +27,9 @@
         (xs x -> xs acc 'fn +> x fn))
     list []? ?:)
 
-(export sum; xs -> xs 0 '+ <+)
+(export sum; 0 '+ '<+)
 
-(export prod; xs -> xs 0 '* <+)
+(export prod; 0 '* '<+)
 
 (export repeat; x ->
     '(->x repeat) x :)

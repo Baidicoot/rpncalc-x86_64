@@ -162,7 +162,6 @@ def compile(argv):
     decls, ast = parser.parser.parse(infile)
     imprts, includes = parser.getexternal(decls)
     external = genexterns(imprts, includes, [], [], backend)
-
     print("compiling " + input + "... ", end="")
     gen(ast, output, argv[3:], external, tolink)
     print("compiled succesfully.")
