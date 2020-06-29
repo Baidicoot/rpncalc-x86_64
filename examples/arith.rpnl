@@ -10,6 +10,9 @@
     '(->x -- ! x *)
     x 0 == ?:)
 
+(export divisor?; x y ->
+    x y / y * x ==)
+
 (export >=; a b -> a b > a b == or)
 (export <=; '> 'not)
 (export <; a b -> a b <= a b == not and)

@@ -12,6 +12,8 @@
         '(->b a b + fib) b :)
     0 1 fib)
 
+(even; 2 divisor?)
+
 fibonacci
-    '(x -> x 3 +) map
+    'even filter
     output

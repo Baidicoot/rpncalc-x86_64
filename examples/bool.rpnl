@@ -6,3 +6,8 @@
 (export or; a b -> 1 a b ?:)
 
 (export !=; '== 'not)
+
+(export doIf; fn bool ->
+    'fn
+    '(->)
+    bool ?:)

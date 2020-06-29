@@ -40,6 +40,16 @@
         (xs x -> xs n -- take x :))
     n 0 == ?:)
 
+(export range; x y ->
+    []
+    '(->x ++ y range) x :
+    x y == ?:)
+
+(export filter; list fn ->
+    []
+    '(-> list \ (xs x -> '(->xs 'fn filter) '(->x ':) 'x fn doIf))
+    list []? ?:)
+
 (export v; !!)
 
 (export map; <$>)

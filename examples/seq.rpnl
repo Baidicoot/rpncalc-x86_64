@@ -1,0 +1,13 @@
+(# library seq #)
+(# include arith #)
+(# include list #)
+
+(export fibonacci;
+    (fib; a b ->
+        '(->b a b + fib) b :)
+    0 1 fib)
+
+(export naturals;
+    (countfrom; x ->
+        '(->x ++ countfrom) x :)
+    0 countfrom)
