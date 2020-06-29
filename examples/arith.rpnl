@@ -9,3 +9,7 @@
     1
     '(->x -- ! x *)
     x 0 == ?:)
+
+(export >=; a b -> a b > a b == or)
+(export <=; '> 'not)
+(export <; a b -> a b <= a b == not and)

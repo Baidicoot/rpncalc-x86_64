@@ -4,6 +4,7 @@ global arith_add
 global arith_sub
 global arith_mul
 global arith_div
+global arith_gt
 
 section .text:
 arith_add:
@@ -47,4 +48,21 @@ arith_div:
     mov rax, [rax+8]
     idiv rbx
     INT rax
+    RETURN
+    
+arith_gt:
+    FUNCTION
+    GET_LOCAL 0
+    push qword [rax+8]
+    GET_LOCAL 1
+    mov rbx, [rax+8]
+    pop rax
+    cmp rax, rbx
+    jg .gt
+.le:
+    INT 0
+    jmp .end
+.gt:
+    INT 1
+.end:
     RETURN

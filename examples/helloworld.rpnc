@@ -1,4 +1,6 @@
 (# import io #)
 (# include list #)
+(# include arith #)
 
 `Hello, World!` io.putstr
+1 1 ==

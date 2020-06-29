@@ -108,6 +108,11 @@ name = "arith_div"
 args = 2
 alts = ["/"]
 
+[arith.gt]
+name = "arith_gt"
+args = 2
+alts = [">"]
+
 [debug]
 [debug.files]
 asm2 = ["std/debug.o"]
@@ -119,3 +124,23 @@ args = 1
 [debug.mem]
 name = "debug_mem"
 args = 0
+
+[bytes]
+[bytes.files]
+asm2 = ["std/bytes.o"]
+
+[bytes.empty]
+name = "bytes_empty"
+args = 0
+
+[bytes.len]
+name = "bytes_len"
+args = 1
+
+[bytes.raw_pop]
+name = "bytes_raw_pop"
+args = 1
+
+[bytes.raw_push]
+name = "bytes_raw_push"
+args = 2

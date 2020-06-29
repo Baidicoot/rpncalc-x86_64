@@ -1,0 +1,8 @@
+(# library bool #)
+(# include bool #)
+
+(export not; x -> 0 1 x ?:)
+(export and; a b -> a 0 b ?:)
+(export or; a b -> 1 a b ?:)
+
+(export !=; '== 'not)

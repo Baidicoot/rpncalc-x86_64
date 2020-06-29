@@ -50,7 +50,7 @@ global givearg
 section .text
 drop_msg: db "drop: "
 alloc_msg: db "alloc: "
-alloc_err: db "failed to allocate", 0x0a
+alloc_err: db "out of memory", 0x0a
 
 section .text
 getmeta: ; get metadata about a block from a pointer
@@ -78,14 +78,14 @@ memalloc: ; return a pointer to an unallocated block
     cmp rbx, rax
     jne .loop
 .err:
-    mov rax, 2
+    mov rax, 1
     mov rdx, alloc_err
-    mov rsi, 19
+    mov rsi, 14
     mov rdi, 1
     syscall
 
     mov rax, 60
-    mov rdi, 0
+    mov rdi, 1
     syscall
 .ret:
     ; push rax

@@ -1,0 +1,3 @@
+(# import bytes #)
+
+bytes.empty 32 bytes.push 64 bytes.push (chunk -> chunk bytes.len chunk) bytes.pops bytes.pops

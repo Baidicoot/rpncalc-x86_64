@@ -58,19 +58,8 @@ def asm(input, output, flags, extern, links):
         if i == 0:
             out = """
 %include "raw/macro.asm"
-%define BLOCKS 32768
-
-global heaploc
-global heapsize
 global _0
 """ + "".join(list(map(lambda e : "\nextern " + e[0], extern.values()))) + """
-
-section .data
-heaploc: dq heap
-heapsize: dq BLOCKS*32
-
-section .bss
-heap: resb BLOCKS*32
 
 section .text
 _0:

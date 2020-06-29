@@ -1,0 +1,15 @@
+(# library bytes #)
+(# import bytes #)
+(# include bool #)
+
+(export pop; bytes ->
+    0
+    '(->bytes bytes.raw_pop)
+    bytes bytes.len 0 == ?:)
+
+(export push; bytes x ->
+    bytes
+    '(->bytes x bytes.raw_push)
+    bytes bytes.len 31 == ?:)
+
+(export pops; 'pop '(a b -> b a))

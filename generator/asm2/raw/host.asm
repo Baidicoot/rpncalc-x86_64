@@ -1,3 +1,6 @@
+; 32 MiB heap
+%define ALLOC_SIZE 1048576*32
+
 extern _0
 global _start
 global putw
@@ -6,12 +9,17 @@ global putblock
 global putstr
 global putint
 
+global heaploc
+global heapsize
+
 section .data
 hex: db "0123456789abcdef"
+heapsize: dq ALLOC_SIZE
+heaploc: dq heap
 
 section .bss
 buf: resb 16
-heap: resb 32*32
+heap: resb ALLOC_SIZE
 
 section .text
 ; converts byte to 2-digit hex (in ax)

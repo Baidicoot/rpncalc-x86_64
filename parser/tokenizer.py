@@ -37,7 +37,7 @@ syntax_toks = {
 }
 
 def t_IGNORE_COMMENT(t):
-    r"(^|\n)\#.*(?=$|\n)"
+    r"(?m)^\#.*$"
 
 def t_SYNTAX(t):
     r"\(\#|\#\)|->|'|;|\(|\)"
@@ -62,7 +62,7 @@ def t_IGNORE_NL(t):
 t_ignore = " \t"
 
 def t_error(t):
-    print("unexpected character '", t.value, "'.")
+    print("unexpected character '", t.value, "' on line", t.lexer.lineno)
     t.lexer.skip(1)
 
 
