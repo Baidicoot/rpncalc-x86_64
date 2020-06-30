@@ -1,0 +1,3 @@
+(# library luatest #)
+
+(export somefn; 1 2)

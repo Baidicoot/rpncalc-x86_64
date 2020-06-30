@@ -8,6 +8,7 @@ import libraries.library
 import generator
 import generator.asm
 import generator.asm2
+import generator.lua
 from sys import argv
 from misc import Absolute, Relative
 
