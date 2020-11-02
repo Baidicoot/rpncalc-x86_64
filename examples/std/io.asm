@@ -116,46 +116,6 @@ putint:
     call putstr
     ret
 
-putw:
-    ; rdi - int
-    mov rsi, buf
-    call wtoh
-
-    mov rdi, buf
-    mov rsi, 4
-    call putstr
-    ret
-
-putblock:
-    ; rdi - block
-
-    cmp rdi, 0
-    je .z
-
-    push rdi
-    mov di, [rdi+6]
-    call putw
-    mov rdi, 0x20
-    call putchar
-    pop rdi
-
-    push rdi
-    mov rdi, [rdi+8]
-    call putint
-    pop rdi
-
-    ; push rdi
-    ; mov rdi, [rdi+16]
-    ; call putint
-    ; pop rdi
-
-    ; push rdi
-    ; mov rdi, [rdi+24]
-    ; call putint
-    ; pop rdi
-.z:
-    ret
-
 io_putint:
     FUNCTION
     GET_LOCAL 0
