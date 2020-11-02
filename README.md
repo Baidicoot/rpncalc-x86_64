@@ -9,6 +9,7 @@
 This is a compiler for RPNCalc5, the coolest new functional, declarative and concatenative stack-based programming language around!
 
 This version compiles to x86_64 for **Linux** (I am not willing to mess around with the windows API, although probably could port it to Mac).
+Note that you need to assemble `host.asm` and `memory.asm` in `generator/asm2/raw` to use the x86_64 backend.
 
 ## Language by Example
 Here's how you write the swap function:
